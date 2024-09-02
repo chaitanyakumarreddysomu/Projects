@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<section>
+		<div id="toast-container">
+						        <th:block th:if="${session.succMsg}">
+						            <div class="toast success" data-message-type="success">
+						                <p class="toast-text" th:text="${session.succMsg}"></p>
+						            </div>
+						        </th:block>
+
+						        <th:block th:if="${session.errorMsg}">
+						            <div class="toast error" data-message-type="error">
+						                <p class="toast-text" th:text="${session.errorMsg}"></p>
+						            </div>
+						        </th:block>
+						    </div>
+		<main class="main">
+		       <div class="page-header breadcrumb-wrap">
+		           <div class="container">
+		               <div class="breadcrumb">
+		                   <a href='index.html' rel='nofollow'><i class="fi-rs-home mr-5"></i>Home</a>
+		                   <span></span> Shop
+		                   <span></span> Cart
+		               </div>
+		           </div>
+		       </div>
+		       <div class="container mb-80 mt-50">
+		           <div class="row">
+		               <div class="col-lg-8 mb-40">
+		                   <h1 class="heading-2 mb-10">Your Cart</h1>
+		                   <div class="d-flex justify-content-between">
+		                       <h6 class="text-body">There are <span class="text-brand">[[${numberOfItems}]]</span> products in your cart</h6>
+		                       
+		                   </div>
+		               </div>
+		           </div>
+		           <div class="row">
+		               <div class="col-lg-8">
+		                   <div class="table-responsive shopping-summery">
+		                       <table class="table table-wishlist">
+		                           <thead>
+		                               <tr class="main-heading">
+		                                   
+		                                   <th scope="col" colspan="2">Product</th>
+		                                   <th scope="col">Unit Price</th>
+		                                   <th scope="col">Quantity</th>
+		                                   <th scope="col">Subtotal</th>
+		                                   
+		                               </tr>
+		                           </thead>
+		                           <tbody>
+		                              
+		                               
+		                               <tr th:each="cart,c:${carts}">
+		                                  
+		                                   <td class="image product-thumbnail "><img th:src="@{'/img/product_img/'+${cart.product.image}}"></td>
+		                                   <td class="product-des product-name">
+		                                       <h6 class="mb-5"><a class='product-name mb-10 text-heading' href='shop-product-right.html'>[[${cart.product.title}]]</a></h6>
+		                                       
+		                                   </td>
+		                                   <td class="price" data-title="Price">
+		                                       <h4 class="text-body">[[${cart.product.discountPrice}]]</h4>
+											   
+		                                   </td>
+		                                   <td class="text-center detail-info" data-title="Stock">
+											<a th:href="@{'/user/cartQuantityUpdate?sy=de&cid='+${cart.id}}">
+																					<i class="fa-solid fa-minus"></i>
+																			</a> [ [[${cart.quantity}]] ] <a
+																				th:href="@{'/user/cartQuantityUpdate?sy=in&cid='+${cart.id}}">
+																					<i class="fa-solid fa-plus"></i>
+																			</a>
+		                                   </td>
+		                                   <td class="price" data-title="Price">
+		                                       <h4 class="text-brand">[[${cart.totalPrice}]]</h4>
+		                                   </td>
+		                                   
+		                               </tr>
+		                           </tbody>
+		                       </table>
+		                   </div>
+		                   <div class="divider-2 mb-30"></div>
+		                   <div class="cart-action d-flex justify-content-between">
+		                       <a class="btn" href="/products"><i class="fi-rs-arrow-left mr-10"></i>Continue Shopping</a>
+		                       
+		                   </div>
+		                   <div class="row mt-50">
+		                       
+		                       
+		                   </div>
+		               </div>
+		               <div class="col-lg-4">
+		                   <div class="border p-md-4 cart-totals ml-30">
+		                       <div class="table-responsive">
+		                           <table class="table no-border">
+		                               <tbody>
+		                                   <tr>
+		                                       <td class="cart_total_label">
+		                                           <h6 class="text-muted">Subtotal</h6>
+		                                       </td>
+		                                       <td class="cart_total_amount">
+		                                           <h4 class="text-brand text-end">[[${totalOrderPrice}]]</h4>
+		                                       </td>
+		                                   </tr>
+		                                   
+		                                   
+		                                       
+		                                   
+		                               </tbody>
+		                           </table>
+		                       </div>
+		                       <a href="/user/orders" class="btn mb-20 w-100">Proceed To CheckOut<i class="fi-rs-sign-out ml-15"></i></a>
+		                   </div>
+		               </div>
+		           </div>
+		       </div>
+		   </main>
+
+	</section>
+</body>
+</html>

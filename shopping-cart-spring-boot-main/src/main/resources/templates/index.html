@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<section>
+		<main class="main">
+		       <section class="home-slider position-relative mb-30">
+		           <div class="home-slide-cover">
+		               <div class="hero-slider-1 style-4 dot-style-1 dot-style-1-position-1">
+		                   <div class="single-hero-slider rectangle single-animation-wrap" style="background-image: url(assets/imgs/slider/slider-5.png)">
+		                       <div class="slider-content">
+		                           <h1 class="display-2 mb-40">
+		                               Don’t miss<br />
+		                               amazing deals
+		                           </h1>
+		                           <p class="mb-65">Sign up for the daily newsletter</p>
+		                           <form class="form-subcriber d-flex">
+		                               <input type="email" placeholder="Your emaill address" />
+		                               <button class="btn" type="submit">Subscribe</button>
+		                           </form>
+		                       </div>
+		                   </div>
+		                   <div class="single-hero-slider rectangle single-animation-wrap" style="background-image: url(assets/imgs/slider/slider-6.png)">
+		                       <div class="slider-content">
+		                           <h1 class="display-2 mb-40">
+		                               Fresh Vegetables<br />
+		                               Big discount
+		                           </h1>
+		                           <p class="mb-65">Save up to 50% off on your first order</p>
+		                           <form class="form-subcriber d-flex">
+		                               <input type="email" placeholder="Your emaill address" />
+		                               <button class="btn" type="submit">Subscribe</button>
+		                           </form>
+		                       </div>
+		                   </div>
+		               </div>
+		               <div class="slider-arrow hero-slider-1-arrow"></div>
+		           </div>
+		       </section>
+		       <!--End hero-->
+		       <div class="container mb-30">
+		           <div class="row">
+		               <div class="col-lg-4-5">
+		                   <section class="product-tabs section-padding position-relative">
+		                       <div class="section-title style-2">
+		                           <h3>Popular Products</h3>
+		                       </div>
+		                       <!--End nav-tabs-->
+							   
+							 
+		                    <div class="row product-grid">
+							
+		                       <div class="col-lg-1-5 col-md-4 col-12 col-sm-6" th:each="p:${products}">
+		                           <div class="product-cart-wrap mb-30">
+		                               <div class="product-img-action-wrap">
+		                                   <div class="product-img product-img-zoom">
+		                                       <a th:href="@{'/product/'+${p.id}}">
+												<img alt="" th:src="@{'/img/product_img/'+${p.image}}"
+					   													width="150px" height="150px">
+		                                           
+		                                       </a>
+		                                   </div>
+		                                   
+		                                   <div class="product-badges product-badges-position product-badges-mrg">
+		                                       <span class="hot">[[${p.discount}]]% off</span>
+		                                   </div>
+		                               </div>
+		                               <div class="product-content-wrap">
+		                                   <div class="product-category">
+		                                       <a href='shop-grid-right.html'>[[${p.category}]]</a>
+		                                   </div>
+		                                   <h2><a style="display: -webkit-box;
+										   -webkit-line-clamp: 3;
+										   -webkit-box-orient: vertical;
+										   overflow: hidden;
+										   text-overflow: ellipsis;" th:href="@{'/product/'+${p.id}}">[[${p.title}]]</a></h2>
+		                                   
+		                                   
+		                                   <div class="product-card-bottom">
+		                                       <div class="product-price">
+		                                           <span>[[${p.discountPrice}]]</span>
+		                                           <span class="old-price">[[${p.price}]]</span>
+		                                       </div>
+											   
+		                                      
+		                                   </div>
+		                               </div>
+		                           </div>
+		                       </div>
+		                       
+							   <th:block th:if="${productsSize == 0}">
+							       <div class="no-items-found">
+							           
+									<h3 class="mb-150 mt-100 text-capitalize">
+							           It looks like we don’t have any products for 
+							           <span th:text="${searchTerm}" style="font-weight: bold; color: #3bb77e;"></span>
+							           right now.
+							       </h3>
+									
+									   
+									   
+									   
+							       </div>
+							   </th:block>
+		                   </div>
+		                       <!--End tab-content-->
+		                   </section>
+		                  
+		                   <section class="banners">
+		                       <div class="row">
+		                           <div class="col-lg-4 col-md-6">
+		                               <div class="banner-img">
+		                                   <img src="assets/imgs/banner/banner-1.png" alt="" />
+		                                   <div class="banner-text">
+		                                       <h4>
+		                                           Everyday Fresh & <br />Clean with Our<br />
+		                                           Products
+		                                       </h4>
+		                                       <a class='btn btn-xs' href='shop-grid-right.html'>Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+		                                   </div>
+		                               </div>
+		                           </div>
+		                           <div class="col-lg-4 col-md-6">
+		                               <div class="banner-img">
+		                                   <img src="assets/imgs/banner/banner-2.png" alt="" />
+		                                   <div class="banner-text">
+		                                       <h4>
+		                                           Make your Breakfast<br />
+		                                           Healthy and Easy
+		                                       </h4>
+		                                       <a class='btn btn-xs' href='shop-grid-right.html'>Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+		                                   </div>
+		                               </div>
+		                           </div>
+		                           <div class="col-lg-4 d-md-none d-lg-flex">
+		                               <div class="banner-img mb-sm-0">
+		                                   <img src="assets/imgs/banner/banner-3.png" alt="" />
+		                                   <div class="banner-text">
+		                                       <h4>The best Organic <br />Products Online</h4>
+		                                       <a class='btn btn-xs' href='shop-grid-right.html'>Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+		                                   </div>
+		                               </div>
+		                           </div>
+		                       </div>
+		                   </section>
+		                   <!--End banners-->
+		               </div>
+					   <div class="col-lg-1-5 primary-sidebar sticky-sidebar">
+					   		                   <div class="sidebar-widget widget-category-2 mb-30">
+					   		                       <h5 class="section-title style-1 mb-30">Category</h5>
+					   		                       <ul>
+					   		                           <li>
+					   		                               <a href="/products" th:classappend="${paramValue==''} ? 'active':''"  aria-current="true">All</a>
+					   		                           </li>
+					   		                           
+					   								   
+					   								   <li th:each="c : ${categories}">
+					   								               <a th:href="@{'/products?category=' + ${c.name}}"
+					   								                  th:classappend="${paramValue == c.name} ? 'active':''">
+					   								                   
+					   								                   [[${c.name}]]
+					   								               </a>
+					   								               
+					   								           </li>
+					   								   
+					   								   
+					   		                       </ul>
+					   		                   </div>
+					   		                   <!-- Fillter By Price -->
+					   						   
+
+					   		                   <!-- Product sidebar Widget -->
+					   		                 
+					   		                   <div class="banner-img wow fadeIn mb-lg-0 animated d-lg-block d-none">
+					   		                       <img src="assets/imgs/banner/banner-11.png" alt="" />
+					   		                       <div class="banner-text">
+					   		                           <span>Oganic</span>
+					   		                           <h4>
+					   		                               Save 17% <br />
+					   		                               on <span class="text-brand">Oganic</span><br />
+					   		                               Juice
+					   		                           </h4>
+					   		                       </div>
+					   		                   </div>
+					   		               </div>
+		           </div>
+		       </div>
+		       
+		       <!--End category slider-->
+		       
+		       <!--End 4 columns-->
+		   </main>
+	</section>
+</body>
+</html>

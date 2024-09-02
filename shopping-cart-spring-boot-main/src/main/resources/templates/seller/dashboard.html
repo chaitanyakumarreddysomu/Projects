@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Seller Dashboard</title>
+    <link rel="stylesheet" href="/path/to/your/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Seller Dashboard</h1>
+        <nav>
+            <ul>
+                <li><a href="/seller/products">View Products</a></li>
+                <li><a href="/seller/orders">View Orders</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Welcome, <span th:text="${user.name}">User</span>!</h2>
+            <p>Total Orders: <span th:text="${totalOrders}">0</span></p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Your Company Name. All rights reserved.</p>
+    </footer>
+</body>
+</html>
