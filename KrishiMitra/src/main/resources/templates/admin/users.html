@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{adminBase::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Add seller</title>
+</head>
+<body>
+	<section>
+		<style>
+			.user-list tbody td > img {
+			    position: relative;
+				max-width: 50px;
+				float: left;
+				margin-right: 15px;
+				border-radius: 10px;
+			}
+			.user-list tbody td .user-link {
+				display: block;
+				font-size: 1.25em;
+				padding-top: 3px;
+				margin-left: 60px;
+			}
+			.user-list tbody td .user-subhead {
+				font-size: 0.875em;
+				font-style: italic;
+			}
+
+			/* TABLES */
+			.table {
+			    border-collapse: separate;
+			}
+			.table-hover > tbody > tr:hover > td,
+			.table-hover > tbody > tr:hover > th {
+				
+			}
+			.table thead > tr > th {
+				
+				padding-bottom: 0;
+			}
+			.table tbody > tr > td {
+				font-size: 0.875em;
+			
+			
+				vertical-align: middle;
+				padding: 12px 8px;
+			}
+			.table tbody > tr > td:first-child,
+			.table thead > tr > th:first-child {
+				padding-left: 20px;
+			}
+			.table thead > tr > th span {
+				
+				display: inline-block;
+				padding: 0 5px;
+				padding-bottom: 5px;
+				font-weight: normal;
+			}
+			.table thead > tr > th > a span {
+				color: #344644;
+			}
+			.table thead > tr > th > a span:after {
+				content: "\f0dc";
+				font-family: FontAwesome;
+				font-style: normal;
+				font-weight: normal;
+				text-decoration: inherit;
+				margin-left: 5px;
+				font-size: 0.75em;
+			}
+			.table thead > tr > th > a.asc span:after {
+				content: "\f0dd";
+			}
+			.table thead > tr > th > a.desc span:after {
+				content: "\f0de";
+			}
+			.table thead > tr > th > a:hover span {
+				text-decoration: none;
+				color: #2bb6a3;
+				border-color: #2bb6a3;
+			}
+			.table.table-hover tbody > tr > td {
+				-webkit-transition: background-color 0.15s ease-in-out 0s;
+				transition: background-color 0.15s ease-in-out 0s;
+			}
+			.table tbody tr td .call-type {
+				display: block;
+				font-size: 0.75em;
+				text-align: center;
+			}
+			.table tbody tr td .first-line {
+				line-height: 1.5;
+				font-weight: 400;
+				font-size: 1.125em;
+			}
+			.table tbody tr td .first-line span {
+				font-size: 0.875em;
+				
+				font-weight: 300;
+			}
+			.table tbody tr td .second-line {
+				font-size: 0.875em;
+				line-height: 1.2;
+			}
+			.table a.table-link {
+				margin: 0 5px;
+				font-size: 1.125em;
+			}
+			.table a.table-link:hover {
+				text-decoration: none;
+				color: #2aa493;
+			}
+			.table a.table-link.danger {
+				color: #fe635f;
+			}
+			.table a.table-link.danger:hover {
+				color: #dd504c;
+			}
+
+			.table-products tbody > tr > td {
+				background: none;
+				border: none;
+				
+				-webkit-transition: background-color 0.15s ease-in-out 0s;
+				transition: background-color 0.15s ease-in-out 0s;
+				position: relative;
+			}
+			.table-products tbody > tr:hover > td {
+				text-decoration: none;
+				
+			}
+			.table-products .name {
+				display: block;
+				font-weight: 600;
+				padding-bottom: 7px;
+			}
+			.table-products .price {
+				display: block;
+				text-decoration: none;
+				width: 50%;
+				float: left;
+				font-size: 0.875em;
+			}
+			.table-products .price > i {
+				color: #8dc859;
+			}
+			.table-products .warranty {
+				display: block;
+				text-decoration: none;
+				width: 50%;
+				float: left;
+				font-size: 0.875em;
+			}
+			
+			.table-stats .status-social-icon {
+				font-size: 1.9em;
+				vertical-align: bottom;
+			}
+			
+			
+		</style>
+		<div class="page-wrapper">
+			
+			<!-- alert start-->
+			<th:block th:if="${session.succMsg}">
+						    <div class="alert alert-success alert-dismissible fade show py-2 alert-custom" role="alert">
+						        <div class="d-flex align-items-center">
+						            <div class="font-35 text-white"><i class='bx bxs-check-circle'></i></div>
+						            <div class="ms-3">
+						                <h6 class="mb-0 text-white" th:text="${session.succMsg}"></h6>
+						            </div>
+						        </div>
+						        <button type="button" class="btn-close" aria-label="Close"></button>
+						    </div>
+						</th:block>
+						<th:block th:if="${session.errorMsg}">
+						    <div class="alert alert-danger alert-dismissible fade show py-2 alert-custom" role="alert">
+						        <div class="d-flex align-items-center">
+						            <div class="font-35 text-white"><i class='bx bxs-error-circle'></i></div>
+						            <div class="ms-3">
+						                <h6 class="mb-0 text-white" th:text="${session.errorMsg}"></h6>
+						            </div>
+						        </div>
+						        <button type="button" class="btn-close" aria-label="Close"></button>
+						    </div>
+						</th:block>
+			
+			
+			<!-- alert end-->
+		
+			
+			
+			<div class="page-content">
+				<!--breadcrumb-->
+				<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+					<div class="breadcrumb-title pe-3">ADMIN</div>
+					<div class="ps-3">
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb mb-0 p-0">
+								<li class="breadcrumb-item"><a href="/admin/"><i class="bx bx-home-alt"></i></a>
+								</li>
+								<li class="breadcrumb-item active" aria-current="page" th:if="${userType==1}">Users</li>
+								<li class="breadcrumb-item active" aria-current="page" th:if="${userType==2}">Sellers</li>
+								<li class="breadcrumb-item active" aria-current="page" th:if="${userType==3}">Admins</li>
+								
+							</ol>
+						</nav>
+					</div>
+					<div class="ms-auto">
+						
+					</div>
+				</div>
+				<!--end breadcrumb-->
+				<table class="table user-list">
+                    <thead>
+                        <tr>
+							<th><span>SlNo.</span></th>
+                            <th><span>User</span></th>
+							<th><span>Email</span></th>
+                            <th><span>Mobile</span></th>
+							<th><span>Address</span></th>
+                            <th class="text-center"><span>Status</span></th>
+                            
+                            <th><span>Action</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="u,c:${users}">
+							<td>[[${c.count}]]</td>
+                            <td>
+                                <img th:src="@{'/img/profile_img/'+${u.profileImage}}"	 th:alt="${u.name}">
+                                <span class="user-link">[[${u.name}]]</span>
+								<span class="user-subhead">[[${u.role}]]</span>
+                                
+                            </td>
+							<td>
+                                <a href="#">[[${u.email}]]</a>
+                            </td>
+                            <td>
+                                [[${u.mobileNumber}]]
+                            </td>
+							<td>
+                                [[${u.city+','+u.state}]]
+                            </td>
+                            <td class="text-center">
+                                <span class="label label-default">[[${u.isEnable}]]</span>
+                            </td>
+                            
+							<td><a th:href="@{'/admin/updateSts?status=true&id='+${u.id}}+'&type='+${userType}"
+																class="btn btn-sm btn-light">Active</a> 
+																	
+																<a
+																th:href="@{'/admin/updateSts?status=false&id='+${u.id}}+'&type='+${userType}"
+																class="btn btn-sm btn-light">
+																	Inactive</a></td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+			</div>
+		</div>
+
+	</section>
+</body>
+</html>

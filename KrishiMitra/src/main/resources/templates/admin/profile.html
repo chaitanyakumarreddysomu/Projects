@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{adminBase::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+ 
+</head>
+<body>
+	<section>
+		
+		<div class="page-wrapper">
+			
+			<!-- alert start-->
+			<th:block th:if="${session.succMsg}">
+			    <div class="alert alert-success alert-dismissible fade show py-2 alert-custom" role="alert">
+			        <div class="d-flex align-items-center">
+			            <div class="font-35 text-white"><i class='bx bxs-check-circle'></i></div>
+			            <div class="ms-3">
+			                <h6 class="mb-0 text-white" th:text="${session.succMsg}"></h6>
+			            </div>
+			        </div>
+			        <button type="button" class="btn-close" aria-label="Close"></button>
+			    </div>
+			</th:block>
+			<th:block th:if="${session.errorMsg}">
+			    <div class="alert alert-danger alert-dismissible fade show py-2 alert-custom" role="alert">
+			        <div class="d-flex align-items-center">
+			            <div class="font-35 text-white"><i class='bx bxs-error-circle'></i></div>
+			            <div class="ms-3">
+			                <h6 class="mb-0 text-white" th:text="${session.errorMsg}"></h6>
+			            </div>
+			        </div>
+			        <button type="button" class="btn-close" aria-label="Close"></button>
+			    </div>
+			</th:block>
+			
+			
+			<!-- alert end-->
+		
+			
+			
+			<div class="page-content">
+				<!--breadcrumb-->
+				<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+					<div class="breadcrumb-title pe-3">ADMIN</div>
+					<div class="ps-3">
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb mb-0 p-0">
+								<li class="breadcrumb-item"><a href="/admin/"><i class="bx bx-home-alt"></i></a>
+								</li>
+								<li class="breadcrumb-item active" aria-current="page">Admin Profile</li>
+							</ol>
+						</nav>
+					</div>
+					<div class="ms-auto">
+						<!--<div class="btn-group">
+							<button type="button" class="btn btn-light">Settings</button>
+							<button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">	<span class="visually-hidden">Toggle Dropdown</span>
+							</button>
+							<div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">	<a class="dropdown-item" href="javascript:;">Action</a>
+								<a class="dropdown-item" href="javascript:;">Another action</a>
+								<a class="dropdown-item" href="javascript:;">Something else here</a>
+								<div class="dropdown-divider"></div>	<a class="dropdown-item" href="javascript:;">Separated link</a>
+							</div>
+						</div>-->
+					</div>
+				</div>
+				<!--end breadcrumb-->
+				<div class="container">
+					<div class="main-body">
+						<div class="row">
+							<div class="col-lg-4">
+								<div class="card">
+									<div class="card-body">
+										<div class="d-flex flex-column align-items-center text-center">
+											<img th:src="@{'../img/profile_img/'+${user.profileImage}}" alt="Admin" class="rounded-circle p-1 bg-light" width="110">
+											<div class="mt-3">
+												<h4>[[${user.name}]]</h4>
+												<p class="mb-1">[[${user.email}]]</p>
+												<p class="font-size-sm">[[${user.mobileNumber}]]</p>
+												
+												
+											</div>
+										</div>
+										<hr class="my-4" />
+										<form action="/admin/change-password" method="post">
+                                            <div class="row">
+                                                
+                                                <div class="form-group col-md-12 mt-3">
+                                                    <label>Current Password <span class="required">*</span></label>
+                                                    <input class="form-control" type="text" name="currentPassword" />
+                                                </div>
+                                                <div class="form-group col-md-12 mt-3">
+                                                    <label>New Password <span class="required">*</span></label>
+                                                    <input class="form-control" type="text" name="newPassword" />
+                                                </div>
+                                                <div class="form-group col-md-12 mt-3">
+                                                    <label>Confirm Password <span class="required">*</span></label>
+                                                    <input  class="form-control" type="text" name="confirmPassword" />
+                                                </div>
+                                                <div class="col-md-12 mt-4">
+                                                    
+													<button type="submit" class="btn btn-light px-5 " name="submit"><i class='bx bx-cloud-upload mr-1'></i>Update Password</button>
+                                                </div>
+                                            </div>
+                                        </form>
+										
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-lg-8">
+								<div class="card">
+									
+									<div class="card-body">
+										<form action="/admin/update-profile" method="post" enctype="multipart/form-data">
+	                                        <div class="row">
+	                                            <div class="form-group col-md-6 mt-4">
+	                                                <label>Display Name <span class="required">*</span></label>
+	                                                <input type="text" name="name" class="form-control" th:value="${user.name}" />
+	                                            </div>
+	                                            <div class="form-group col-md-6 mt-4">
+	                                                <label>Phone number <span class="required">*</span></label>
+	                                                <input input type="text" name="mobileNumber" class="form-control" th:value="${user.mobileNumber}" />
+	                                            </div>
+	                                            
+	                                            <div class="form-group col-md-12 mt-4">
+	                                                <label>Email Address <span class="required">*</span></label>
+	                                                <input type="text" name="" class="form-control" readonly th:value="${user.email}"/>
+	                                            </div>
+												<div class="form-group col-md-6 mt-4">
+	                                                <label>Address <span class="required">*</span></label>
+	                                                <input type="text" name="address" class="form-control" th:value="${user.address}" />
+	                                            </div>
+	                                            <div class="form-group col-md-6 mt-4">
+	                                                <label>City <span class="required">*</span></label>
+	                                                <input type="text" name="city" class="form-control" th:value="${user.city}" />
+	                                            </div>
+												<div class="form-group col-md-6 mt-4">
+	                                                <label>State <span class="required">*</span></label>
+	                                                <input type="text" name="state" class="form-control" th:value="${user.state}" />
+	                                            </div>
+	                                            <div class="form-group col-md-6 mt-4">
+	                                                <label>Pincode <span class="required">*</span></label>
+	                                                <input type="text" name="pincode" class="form-control" th:value="${user.pincode}" />
+	                                            </div>
+												<div class="form-group col-md-12 mt-4">
+	                                                <label>Image <span class="required">*</span></label>
+	                                                <input type="file" name="img" class="form-control" value=""/>
+	                                            </div>
+												
+												<div class="form-group col-md-6 mt-4">
+	                                                <label>Role <span class="required">*</span></label>
+	                                                <input type="text" name="" class="form-control" readonly th:value="${user.role}"/>
+	                                            </div>
+	                                            <div class="form-group col-md-6 mt-4">
+	                                                <label>Account Status <span class="required">*</span></label>
+	                                                <input type="text" name="" class="form-control" readonly th:value="${user.isEnable}"> 
+													<input type="hidden" th:value="${user.id}" name="id"/>
+	                                            </div>
+	                                            <div class="col-md-12 mt-4">
+	                                          
+													<button type="submit" class="btn btn-light px-5 " name="submit"><i class='bx bx-cloud-upload mr-1'></i>Update Profile</button>
+	                                            </div>
+	                                        </div>
+	                                    </form>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+			</section>
+	
+	
+</body>
+</html>
