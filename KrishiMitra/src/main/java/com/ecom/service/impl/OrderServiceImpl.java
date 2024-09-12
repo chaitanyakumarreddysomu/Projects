@@ -161,5 +161,7 @@ public class OrderServiceImpl implements OrderService {
 	        Double totalIncome = orderRepository.sumPriceByStatus(status);
 	        return (totalIncome != null) ? totalIncome : 0.0; // Handle null if no income
 	    }
+	 
+
 
 }

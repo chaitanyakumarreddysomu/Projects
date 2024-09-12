@@ -412,12 +412,6 @@ public class AdminController {
 	    // Add total income
 	    model.addAttribute("totalIncome", orderService.getTotalIncomeByStatus("DELIVERED"));
 	    
-	    
-        
-        
-        
-      
-
 	    return "admin/orders";
 	}
 

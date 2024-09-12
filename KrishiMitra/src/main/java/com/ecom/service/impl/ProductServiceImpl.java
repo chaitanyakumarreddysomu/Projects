@@ -172,5 +172,10 @@ public class ProductServiceImpl implements ProductService {
 	public long getTotalProductCount() {
 		 return productRepository.count();
 	}
+	
+	public long getTotalProductCountBySellerId(long sellerId) {
+        // Example implementation, assuming you have a repository method for this
+        return productRepository.countBySellerId(sellerId);
+    }
 
 }

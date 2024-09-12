@@ -7,58 +7,146 @@
 </head>
 <body>
 	<section>
-		<div class="container p-5">
-			<p class="text-center fs-3 mt-4">Seller Dashboard</p>
-			<div class="row p-5">
-				<div class="col-md-4 mt-2">
-					<a href="/seller/loadAddProduct" class="text-decoration-none">
-						<div class="card card-sh">
-							<div class="card-body text-center text-primary">
-								<i class="fa-solid fa-square-plus fa-3x"></i>
-								<h4>Add Product</h4>
+		<div class="page-wrapper">
+					<div class="page-content">
+						<div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-4">
+
+							
+							
+							<div class="col">
+								<a href="/seller/products">
+								<div class="card radius-10 overflow-hidden">
+									<div class="card-body">
+										<div class="d-flex align-items-center">
+											<div>
+												<p class="mb-0">Total Products</p>
+												<h5 class="mb-0">[[${totalProducts}]]</h5>
+											</div>
+											<div class="ms-auto text-white">	<i class='bx bx-cart font-30'></i>
+											</div>
+										</div>
+										
+									</div>
+								</div>
+								</a>
+							</div>
+							
+							
+							
+							<div class="col">
+								
+								<div class="card radius-10 overflow-hidden">
+									<div class="card-body">
+										<div class="d-flex align-items-center">
+											<div>
+												<p class="mb-0">Total Orders</p>
+												<h5 class="mb-0">[[${totalElements}]]</h5>
+											</div>
+											<div class="ms-auto text-white">	<i class='bx bx-cart font-30'></i>
+											</div>
+										</div>
+										
+									</div>
+								</div>
+								
+							</div>
+							
+						</div>
+					
+						
+					
+						<div class="card radius-10">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div>
+										<h5 class="mb-0">Orders Summary</h5>
+									</div>
+									<div class="font-22 ms-auto"><i class='bx bx-dots-horizontal-rounded'></i>
+									</div>
+								</div>
+								<hr/>
+								<div class="table-responsive" style="overflow-y:scroll ; height: 400px;overflow-x:hidden ; ">
+									<table class="table align-middle mb-0">
+										<thead class="table-light">
+											<tr>
+												<th>Order id</th>
+												<th>Product</th>
+												<th>Customer</th>
+												<th>Date</th>
+												<th>Price</th>
+												<th>Qty</th>
+												<th>Total Price</th>
+												<th>Status</th>
+												<th>Action</th>
+												
+											</tr>
+										</thead>
+										<tbody >
+										<th:block th:unless="${srch}">
+											<tr th:each="o:${orders}" >
+												<td >[[${o.orderId}]]</td>
+												<td>
+													<div class="d-flex align-items-center">
+														
+														<div class="ms-2">
+															<h6 class="mb-1 font-14">[[${o.product.title}]]</h6>
+														</div>
+													</div>
+												</td>
+												<td>[[${o.orderAddress.firstName+''+o.orderAddress.lastName}]]</td>
+												<td>[[${o.orderDate}]]</td>
+												<td>&#8377;[[${o.price}]]</td>
+												<td>[[${o.quantity}]]</td>
+												<td>&#8377;[[${o.quantity * o.price}]]</td>
+												<td>
+													<div class="d-grid">
+														<a href="javascript:;" class="btn btn-sm btn-light radius-30">[[${o.status}]]</a>
+													</div>
+												</td>
+												<td>
+											    <!-- Check if the status is not 'Cancelled' or 'Delivered' -->
+											    <th:block th:if="${o.status != 'Cancelled' && o.status != 'Delivered'}">
+											        <!-- Form is displayed if the status is not 'Cancelled' or 'Delivered' -->
+											        <form action="/seller/update-order-status" method="post">
+											            <div class="row">
+											                <div class="col">
+											                    <select class="form-control" name="st">
+											                        <option value="">--select--</option>
+											                        <option value="1">In Progress</option>
+											                        <option value="2">Order Received</option>
+											                        <option value="3">Product Packed</option>
+											                        <option value="4">Out for Delivery</option>
+											                        <option value="5">Delivered</option>
+											                        <option value="6">Cancelled</option>
+											                    </select>
+											                </div>
+											                <input type="hidden" name="id" th:value="${o.id}">
+											                <div class="col">
+											                    <button class="btn btn-light px-5 mt-4">Update</button>
+											                </div>
+											            </div>
+											        </form>
+											    </th:block>
+											
+											    <!-- Optionally display a message or leave the cell empty -->
+											    <th:block th:unless="${o.status != 'Cancelled' && o.status != 'Delivered'}">
+											        <!-- Empty cell or placeholder for cancelled/delivered orders -->
+											        <!-- Example: <span>Status is either Cancelled or Delivered</span> -->
+											    </th:block>
+											</td>
+
+												
+											</tr>
+											</th:block>
+											
+										</tbody>
+									</table>
+								</div>
 							</div>
 						</div>
-					</a>
+					</div>
 				</div>
-
-
 				
-
-
-				<div class="col-md-4 mt-2">
-					<a href="/seller/products" class="text-decoration-none">
-						<div class="card card-sh">
-							<div class="card-body text-center text-success">
-								<i class="fa-solid fa-table-list fa-3x"></i>
-								<h4>View Product</h4>
-							</div>
-						</div>
-					</a>
-				</div>
-
-
-				<div class="col-md-4 mt-4">
-					<a href="/seller/orders" class="text-decoration-none">
-						<div class="card card-sh">
-							<div class="card-body text-center text-warning">
-								<i class="fa-solid fa-box-open fa-3x"></i>
-								<h4>Orders</h4>
-							</div>
-						</div>
-					</a>
-				</div>
-
-
-			
-
-
-				
-
-			
-
-
-			</div>
-		</div>
 	</section>
 </body>
 </html>

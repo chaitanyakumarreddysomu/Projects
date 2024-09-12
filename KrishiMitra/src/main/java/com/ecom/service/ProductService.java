@@ -38,6 +38,8 @@ public interface ProductService {
 	public Page<Product> searchActiveProductPagination(Integer pageNo, Integer pageSize, String category, String ch);
 	
 	public Page<Product> getProductsBySellerIdPagination(Integer sellerId, int pageNo, int pageSize, String searchTerm);
-	long getTotalProductCount();
+	long getTotalProductCount();//admin
+	
+	long getTotalProductCountBySellerId(long sellerId);
 
 }

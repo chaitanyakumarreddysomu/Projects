@@ -34,14 +34,6 @@ public class ProductOrder {
 	
 
 
-	public Integer getSellerId() {
-		return sellerId;
-	}
-
-	public void setSellerId(Integer sellerId) {
-		this.sellerId = sellerId;
-	}
-
 
 
 
@@ -152,4 +144,12 @@ public class ProductOrder {
 	
 	
 
+
+	public Integer getSellerId() {
+		return sellerId;
+	}
+
+	public void setSellerId(Integer sellerId) {
+		this.sellerId = sellerId;
+	}
 }

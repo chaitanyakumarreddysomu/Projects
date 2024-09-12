@@ -76,7 +76,30 @@ public class SellerController {
     }
 
     @GetMapping("/")
-    public String index() {
+    public String index(Model model,@AuthenticationPrincipal UserDetails userDetails,Principal principal,
+            @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize) {
+    	String email = userDetails.getUsername();
+    	UserDtls loggedInUser = userService.getUserByEmail(email);
+    	Long sellerId = Long.valueOf(loggedInUser.getId());
+        long totalProducts = productService.getTotalProductCountBySellerId(sellerId);
+        model.addAttribute("totalProducts", totalProducts);
+        
+        
+       
+
+        // Fetch orders for the seller's products
+        Page<ProductOrder> page = orderService.getOrdersBySellerIdPagination1(loggedInUser.getId(), pageNo, pageSize);
+        
+        model.addAttribute("orders", page.getContent());
+        model.addAttribute("pageNo", page.getNumber());
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("totalElements", page.getTotalElements());
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("isFirst", page.isFirst());
+        model.addAttribute("isLast", page.isLast());
+        model.addAttribute("totalIncome", orderService.getTotalIncomeByStatus("DELIVERED"));
+        
         return "seller/index";
     }
 
@@ -136,6 +159,12 @@ public class SellerController {
 
         // Fetch products specific to the logged-in seller
         Page<Product> page = productService.getProductsBySellerIdPagination(loggedInUser.getId(), pageNo, pageSize, searchTerm);
+
+        // Convert ID to Long if necessary
+        Long sellerId = Long.valueOf(loggedInUser.getId());
+
+        // Fetch the total count of all products for the logged-in seller
+        long totalProducts = productService.getTotalProductCountBySellerId(sellerId);
         
         // Add attributes to the model
         model.addAttribute("products", page.getContent());
@@ -145,6 +174,7 @@ public class SellerController {
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("isFirst", page.isFirst());
         model.addAttribute("isLast", page.isLast());
+        model.addAttribute("totalProducts", totalProducts);
 
         return "seller/products";
     }
@@ -206,12 +236,18 @@ public class SellerController {
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("isFirst", page.isFirst());
         model.addAttribute("isLast", page.isLast());
+        
+        
+        
 
         return "seller/orders";
     }
     
     @PostMapping("/update-order-status")
-    public String updateOrderStatus(@RequestParam Integer id, @RequestParam Integer st, HttpSession session, @AuthenticationPrincipal UserDetails userDetails) {
+    public String updateOrderStatus(@RequestParam Integer id, 
+                                     @RequestParam Integer st, 
+                                     HttpSession session, 
+                                     @AuthenticationPrincipal UserDetails userDetails) {
         // Retrieve the logged-in user's email
         String email = userDetails.getUsername();
         UserDtls loggedInUser = userService.getUserByEmail(email);
@@ -222,7 +258,7 @@ public class SellerController {
         // Check if the order exists and belongs to the logged-in seller
         if (order == null || !order.getProduct().getSellerId().equals(loggedInUser.getId())) {
             session.setAttribute("errorMsg", "Order not found or unauthorized access.");
-            return "redirect:/seller/orders";
+            return "redirect:/seller/index"; // Redirect to an appropriate page
         }
 
         // Retrieve the status from the enum based on the provided ID
@@ -237,23 +273,24 @@ public class SellerController {
 
         if (status == null) {
             session.setAttribute("errorMsg", "Invalid status.");
-            return "redirect:/seller/orders";
+            return "redirect:/seller/index"; // Redirect to an appropriate page
         }
 
         // Update the order status
         ProductOrder updatedOrder = orderService.updateOrderStatus(id, status);
 
         // Send email notification
-        
+        // Implement email notification logic here if needed
 
         // Set success or error message
-        if (!ObjectUtils.isEmpty(updatedOrder)) {
+        if (updatedOrder != null) {
             session.setAttribute("succMsg", "Status Updated Successfully.");
         } else {
             session.setAttribute("errorMsg", "Failed to update status.");
         }
 
-        return "redirect:/seller/orders";
+        // Redirect to the intended page after the update
+        return "redirect:/seller/"; // Update this path based on where you want to redirect
     }
 
     

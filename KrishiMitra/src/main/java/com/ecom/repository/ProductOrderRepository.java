@@ -30,6 +30,8 @@ public interface ProductOrderRepository extends JpaRepository<ProductOrder, Inte
     Double sumPriceByStatus(@Param("status") String status);
 
     long countByStatus(String status);
+    
+    
 
 
 }
