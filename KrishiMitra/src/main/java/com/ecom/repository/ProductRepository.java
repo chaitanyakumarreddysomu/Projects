@@ -35,4 +35,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Integer> findProductIdsBySellerId(@Param("sellerId") int sellerId);
 	
 	long countBySellerId(long sellerId);
+	Page<Product> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+	List<Product> findByTitleContainingIgnoreCase(String title);
+	
+	Page<Product> findByTitleContainingIgnoreCaseOrderByDiscountDesc(String title, Pageable pageable);
+	
 }

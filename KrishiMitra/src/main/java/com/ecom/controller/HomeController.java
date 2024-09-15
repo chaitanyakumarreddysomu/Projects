@@ -49,6 +49,13 @@ import org.slf4j.LoggerFactory;import org.springframework.web.servlet.mvc.suppor
 import org.springframework.ui.Model;
 
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+
 @Controller
 public class HomeController {
 
@@ -87,7 +94,7 @@ public class HomeController {
 			m.addAttribute("countCart", countCart);
 		}
 
-		List<Category> allActiveCategory = categoryService.getAllActiveCategory();
+		List<Category> allActiveCategory = categoryService.getAllActiveCategory();	
 		m.addAttribute("categorys", allActiveCategory);
 	}
 
@@ -121,6 +128,10 @@ public class HomeController {
 	    }
 	    
 	    return "index";
+	}
+	@GetMapping("/contact")
+	public String contact() {
+		return "contact";
 	}
 
 	@GetMapping("/signin")
@@ -196,12 +207,14 @@ public class HomeController {
 	    if (existsEmail) {
 	        // Add error message if email already exists
 	        redirectAttributes.addFlashAttribute("errorMsg", "Email already exists");
+	        return "redirect:/register";
 	    } else {
 	        // Handle file upload
 	        String imageName = file.isEmpty() ? "default.jpg" : file.getOriginalFilename();
 	        user.setProfileImage(imageName);
 
 	        try {
+	            // Save user to the database
 	            UserDtls saveUser = userService.saveUser(user);
 
 	            if (saveUser != null) {
@@ -211,7 +224,7 @@ public class HomeController {
 	                    Path path = Paths.get(saveFile.getAbsolutePath(), imageName);
 
 	                    // Ensure directory exists
-	                    Files.createDirectories(saveFile.toPath());
+	                    Files.createDirectories(saveFile.toPath().getParent());
 
 	                    // Save the file to the specified path
 	                    Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
@@ -223,9 +236,14 @@ public class HomeController {
 	                // Add error message if user could not be saved
 	                redirectAttributes.addFlashAttribute("errorMsg", "Something went wrong on the server");
 	            }
+	        } catch (IOException e) {
+	            // Handle file-related errors
+	            e.printStackTrace();
+	            redirectAttributes.addFlashAttribute("errorMsg", "Failed to save file: " + e.getMessage());
 	        } catch (Exception e) {
 	            // Handle unexpected errors
-	            redirectAttributes.addFlashAttribute("errorMsg", "An unexpected error occurred");
+	            e.printStackTrace();
+	            redirectAttributes.addFlashAttribute("errorMsg", "An unexpected error occurred: " + e.getMessage());
 	        }
 	    }
 
@@ -300,18 +318,20 @@ public class HomeController {
 		        return "redirect:/signin";
 		    }
 		}
-	@GetMapping("/search")
-	public String searchProduct(@RequestParam String ch, Model m) {
-		List<Product> searchProducts = productService.searchProduct(ch);
-		m.addAttribute("products", searchProducts);
-		List<Category> categories = categoryService.getAllActiveCategory();
-		m.addAttribute("categories", categories);
-		return "product";
+		@GetMapping("/search")
+		public String searchProduct(@RequestParam String ch, Model m) {
+		    List<Product> searchProducts = productService.searchProduct(ch);
+		    m.addAttribute("products", searchProducts);
+		    List<Category> categories = categoryService.getAllActiveCategory();
+		    m.addAttribute("categories", categories);
 
-	}
+		   
+
+		    return "product";
+		}
 	
-	
-	
+		
+		
 	
 
 }

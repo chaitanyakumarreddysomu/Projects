@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -177,5 +178,44 @@ public class ProductServiceImpl implements ProductService {
         // Example implementation, assuming you have a repository method for this
         return productRepository.countBySellerId(sellerId);
     }
+	@Override
+	public Page<Product> searchProductsByTitle(String title, Pageable pageable) {
+	    return productRepository.findByTitleContainingIgnoreCase(title, pageable);
+	}
+	@Override
+	public Page<Product> searchProductsByTitleOrderedByDiscount(String title, Pageable pageable) {
+        return productRepository.findByTitleContainingIgnoreCaseOrderByDiscountDesc(title, pageable);
+    }
+	
+	@Override
+    public Page<Product> searchProducts(String query, Pageable pageable) {
+        // Extract relevant keywords from the query
+        String keyword = extractKeywords(query);
+        return productRepository.findByTitleContainingIgnoreCaseOrderByDiscountDesc(keyword, pageable);
+    }
 
+    private String extractKeywords(String query) {
+    	// Normalize the query by converting to lowercase and removing common words
+        String[] commonWords = {"buy", "want", "search", "for", "the", "a", "is", "are", "of", "in", "to", "and"};
+        String[] words = query.toLowerCase().split("\\s+");
+        StringBuilder keywords = new StringBuilder();
+
+        for (String word : words) {
+            boolean isCommonWord = false;
+            for (String common : commonWords) {
+                if (word.equals(common)) {
+                    isCommonWord = true;
+                    break;
+                }
+            }
+            if (!isCommonWord) {
+                if (keywords.length() > 0) {
+                    keywords.append(" ");
+                }
+                keywords.append(word);
+            }
+        }
+
+        return keywords.toString().trim();
+    }
 }

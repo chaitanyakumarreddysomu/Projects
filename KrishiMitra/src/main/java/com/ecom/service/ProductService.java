@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import com.ecom.model.Product;
 
 public interface ProductService {
@@ -42,4 +44,10 @@ public interface ProductService {
 	
 	long getTotalProductCountBySellerId(long sellerId);
 
+	Page<Product> searchProductsByTitle(String title, Pageable pageable);
+	
+	Page<Product> searchProductsByTitleOrderedByDiscount(String title, Pageable pageable);
+	
+
+	public Page<Product> searchProducts(String query, Pageable pageable);
 }

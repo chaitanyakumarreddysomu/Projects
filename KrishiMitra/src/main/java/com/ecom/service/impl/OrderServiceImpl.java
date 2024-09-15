@@ -30,10 +30,7 @@ import com.razorpay.RazorpayClient;
 @Service
 public class OrderServiceImpl implements OrderService {
 
-	private static final String KEY="rzp_test_D1DIAIAHMS0aZp";
-	private static final String KEY_SECRET="vxyPTcJeduvdsS8xQJPnriqE";
-	private static final String CURRENCY="INR";
-	
+
 	@Autowired
 	private ProductOrderRepository orderRepository;
 	

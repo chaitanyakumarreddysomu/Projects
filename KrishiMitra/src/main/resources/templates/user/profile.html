@@ -8,7 +8,36 @@
 </head>
 <body>
 	<section>
-		
+		<!--assistant button-->
+				<button id="voice-button" class="text-white " style="position: fixed; z-index: 2147483647; right: 25px; bottom: 70px; 
+				width: 50px; height: 50px; border: none; border-radius: 100%;
+				 background:linear-gradient(-120deg,#4285f4,#34a853,#fbbc05,#ea4335) ;"><i class="fa fa-microphone"></i></button>
+				 
+				 <audio id="notification-sound" th:src="@{/assets/sounds/notify.mp3}" preload="auto"></audio>
+				 <!--assistant button-->
+				 
+				 <!--chat bot-->
+				 	 
+				 		<button id="chatbot-button" class="text-white " style="position: fixed; z-index: 2147483647; right: 25px; bottom: 125px; 
+				 		 		width: 50px; height: 50px; border: none; border-radius: 100%;
+				 		 		 background:linear-gradient(-120deg,rgb(120, 211, 170),rgb(41, 129, 89),#3bb77e) ;"><i class='fa-solid fa-robot' style='font-size:24px'></i></button>
+				 		 
+				 				 
+				 				 
+				 				 <div class="chat">
+				 		 			<div class="chat-title">
+				 		 			<h1 style="color:#fff">AgriMate</h1>
+				 		 			<button class="close-btn"><i class="fa fa-times	"></i></button>
+				 		 			</div>
+				 		 			<div class="messages">
+				 		 			<div class="messages-content"></div>
+				 		 			</div>
+				 		 			<div class="message-box">
+				 		 			<input type="text" class="message-input" placeholder="Type message..."></input>
+				 		 			<button type="submit" class="message-submit"><i class="fa-solid fa-paper-plane" style='font-size:24px'></i></button>
+				 		 			</div>
+				 		 		</div>
+				 	 <!--chat bot-->
 		<main class="main pages">
 		        <div class="page-header breadcrumb-wrap">
 		            <div class="container">
@@ -114,12 +143,14 @@
 																								o.price}]]
 																							</td>
 																							<td>[[${o.status}]]</td>
-																							<td><th:block th:if="${o.status!='Cancelled'}">
-																									<a th:href="@{'/user/update-status?id='+${o.id}+'&st=6' }"
-																										class="btn btn-sm btn-danger">Cancel</a>
-																								</th:block> <th:block th:unless="${o.status!='Cancelled'}">
-																									<a href="#" class="btn btn-sm btn-danger disabled" >Cancel</a>
-																								</th:block></td>
+																							<td>
+																							    <th:block th:if="${o.status != 'Cancelled' && o.status != 'Delivered'}">
+																							        <a th:href="@{'/user/update-status?id='+${o.id}+'&st=6'}" class="btn btn-sm btn-danger">Cancel</a>
+																							    </th:block>
+																							    <th:block th:unless="${o.status != 'Cancelled' && o.status != 'Delivered'}">
+																							        
+																							    </th:block>
+																							</td>
 																						</tr>
 																					</tbody>
 																				</table>
