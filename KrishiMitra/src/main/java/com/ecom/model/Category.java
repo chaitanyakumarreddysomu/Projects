@@ -16,15 +16,13 @@ import lombok.Setter;
 @Entity
 public class Category {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-	private String name;
+    private String name;
 
-	private String imageName;
-
-	private Boolean isActive;
+    private Boolean isActive;
 
 	public Integer getId() {
 		return id;
@@ -42,14 +40,6 @@ public class Category {
 		this.name = name;
 	}
 
-	public String getImageName() {
-		return imageName;
-	}
-
-	public void setImageName(String imageName) {
-		this.imageName = imageName;
-	}
-
 	public Boolean getIsActive() {
 		return isActive;
 	}
@@ -58,6 +48,18 @@ public class Category {
 		this.isActive = isActive;
 	}
 
-	
-	
+	public Category(Integer id, String name, Boolean isActive) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.isActive = isActive;
+	}
+
+	public Category() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+    
+    
+
 }

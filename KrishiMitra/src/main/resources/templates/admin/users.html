@@ -228,7 +228,7 @@
                         <tr th:each="u,c:${users}">
 							<td>[[${c.count}]]</td>
                             <td>
-                                <img th:src="@{'/img/profile_img/'+${u.profileImage}}"	 th:alt="${u.name}">
+                                <img th:src="@{'/img/profile_img/'+${u.profileImage}}" th:alt="${u.name}">
                                 <span class="user-link">[[${u.name}]]</span>
 								<span class="user-subhead">[[${u.role}]]</span>
                                 
@@ -243,16 +243,21 @@
                                 [[${u.city+','+u.state}]]
                             </td>
                             <td class="text-center">
-                                <span class="label label-default">[[${u.isEnable}]]</span>
+                                <span class="label label-default">[[${u.isEnable ? 'Active' : 'Inactive'}]]</span>
                             </td>
                             
-							<td><a th:href="@{'/admin/updateSts?status=true&id='+${u.id}}+'&type='+${userType}"
-																class="btn btn-sm btn-light">Active</a> 
-																	
-																<a
-																th:href="@{'/admin/updateSts?status=false&id='+${u.id}}+'&type='+${userType}"
-																class="btn btn-sm btn-light">
-																	Inactive</a></td>
+							<td>
+                                <!-- Display "Active" button if user is inactive -->
+                                <th:block th:if="${!u.isEnable}">
+                                    <a th:href="@{'/admin/updateSts?status=true&id='+${u.id}}+'&type='+${userType}"
+                                    class="btn btn-sm btn-light">Active</a>
+                                </th:block>
+                                <!-- Display "Inactive" button if user is active -->
+                                <th:block th:if="${u.isEnable}">
+                                    <a th:href="@{'/admin/updateSts?status=false&id='+${u.id}}+'&type='+${userType}"
+                                    class="btn btn-sm btn-light">Inactive</a>
+                                </th:block>
+                            </td>
                         </tr>
                         
                     </tbody>

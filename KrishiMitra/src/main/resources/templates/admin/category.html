@@ -66,7 +66,7 @@
 										<th>Sl No</th>
 										<th>Category</th>
 										<th>Status</th>
-										<th>Image</th>
+										
 										
 										<th>Actions</th>
 									</tr>
@@ -85,7 +85,8 @@
 										<td>[[${cat.name}]]</td>
 										<td><div class="badge rounded-pill bg-light p-2 text-uppercase px-3"><i class='bx bxs-circle align-middle me-1'></i>[[${cat.isActive}]]</div></td>
 										
-										<td><img th:src="@{'/img/category_img/'+${cat.imageName}}" width="50px" height="50px"></td>
+										<!--<td><img th:src="@{/uploads/category_img/${cat.imageName}}" width="50px" height="50px"></td>-->
+										
 										<td>
 											<div class="d-flex order-actions">
 												<a th:href="@{'/admin/loadEditCategory/'+${cat.id}}" class=""><i class='bx bxs-edit'></i></a>

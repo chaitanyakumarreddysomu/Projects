@@ -86,7 +86,10 @@
 		                               </div>
 		                               <div class="product-content-wrap">
 		                                   <div class="product-category">
-		                                       <a href='shop-grid-right.html'>[[${p.category}]]</a>
+		                                       <a th:href="@{'/products?category=' + ${p.category}}">[[${p.category}]]</a>
+											   
+
+											  
 		                                   </div>
 		                                   <h2><a style="display: -webkit-box;
 										   -webkit-line-clamp: 3;
