@@ -36,7 +36,7 @@
 										<div class="d-flex align-items-center">
 											<div>
 												<p class="mb-0">Total Income</p>
-												<h5 class="mb-0">&#8377;[[${totalIncome}]]</h5>
+												<h5 class="mb-0" id="simplifiedCount">  &#8377;  [[${totalIncome}]]</h5>
 											</div>
 											<div class="ms-auto text-white">	<i class='bx bx-wallet font-30'></i>
 											</div>
@@ -53,7 +53,7 @@
 										<div class="d-flex align-items-center">
 											<div>
 												<p class="mb-0">Total Users</p>
-												<h5 class="mb-0">[[${countType1}]]</h5>
+												<h5 class="mb-0" id="simplifiedCount">[[${countType1}]]</h5>
 											</div>
 											<div class="ms-auto text-white">	<i class="bx bx-user font-30"></i><span>
 											</div>
@@ -70,7 +70,7 @@
 										<div class="d-flex align-items-center">
 											<div>
 												<p class="mb-0">Total Sellers</p>
-												<h5 class="mb-0">[[${countType2}]]</h5>
+												<h5 class="mb-0" id="simplifiedCount">[[${countType2}]]</h5>
 											</div>
 											<div class="ms-auto text-white">	<i class='bx bx-store font-30'></i>
 											</div>
@@ -87,7 +87,7 @@
 										<div class="d-flex align-items-center">
 											<div>
 												<p class="mb-0">Total Orders</p>
-												<h5 class="mb-0">[[${totalElements}]]</h5>
+												<h5 class="mb-0" id="simplifiedCount">[[${totalElements}]]</h5>
 											</div>
 											<div class="ms-auto text-white">	<i class='bx bx-cart font-30'></i>
 											</div>
@@ -103,7 +103,7 @@
 										<div class="d-flex align-items-center">
 											<div>
 												<p class="mb-0">Pending Orders</p>
-												<h5 class="mb-0">[[${totalPending}]]</h5>
+												<h5 class="mb-0" id="simplifiedCount">[[${totalPending}]]</h5>
 											</div>
 											<div class="ms-auto text-white">	<i class='bx bx-cart font-30'></i>
 											</div>
@@ -118,7 +118,7 @@
 										<div class="d-flex align-items-center">
 											<div>
 												<p class="mb-0">Delivered Orders</p>
-												<h5 class="mb-0">[[${totalDelivered}]]</h5>
+												<h5 class="mb-0" id="simplifiedCount">[[${totalDelivered}]]</h5>
 											</div>
 											<div class="ms-auto text-white">	<i class='bx bx-cart font-30'></i>
 											</div>
@@ -133,7 +133,7 @@
 										<div class="d-flex align-items-center">
 											<div>
 												<p class="mb-0">cancelled Orders</p>	
-												<h5 class="mb-0">[[${totalCancelled}]]</h5>
+												<h5 class="mb-0" id="simplifiedCount">[[${totalCancelled}]]</h5>
 											</div>
 											<div class="ms-auto text-white">	<i class='bx bx-cart font-30'></i>
 											</div>
@@ -204,6 +204,24 @@
 						</div>
 					</div>
 				</div>
+				<script>
+				    document.addEventListener("DOMContentLoaded", function() {
+				        const incomeElement = document.getElementById("simplifiedCount");
+				        const incomeValue = parseFloat(incomeElement.innerText.replace(/[^0-9.-]+/g,"")); // Extract the numeric value
+
+				        incomeElement.innerText = formatIncome(incomeValue);
+				    });
+
+				    function formatIncome(amount) {
+				        if (amount < 1000) {
+				            return  amount; // Return the original amount
+				        } else if (amount < 1000000) {
+				            return   (amount / 1000).toFixed(1) + "K"; // Format in thousands
+				        } else {
+				            return (amount / 1000000).toFixed(1) + "M"; // Format in millions
+				        }
+				    }
+				</script>
 	</section>
 </body>
 </html>

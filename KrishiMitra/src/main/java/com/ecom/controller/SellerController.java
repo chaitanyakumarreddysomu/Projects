@@ -35,6 +35,8 @@ import com.ecom.service.CartService;
 import com.ecom.service.CategoryService;
 import com.ecom.service.OrderService;
 import com.ecom.service.ProductService;
+import com.ecom.service.SeleniumService;
+import com.ecom.service.SeleniumService.MarketData;
 import com.ecom.service.UserService;
 import com.ecom.util.CommonUtil;
 import com.ecom.util.OrderStatus;
@@ -78,7 +80,7 @@ public class SellerController {
     @GetMapping("/")
     public String index(Model model,@AuthenticationPrincipal UserDetails userDetails,Principal principal,
             @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize) {
+            @RequestParam(name = "pageSize", defaultValue = "10000000") int pageSize) {
     	String email = userDetails.getUsername();
     	UserDtls loggedInUser = userService.getUserByEmail(email);
     	Long sellerId = Long.valueOf(loggedInUser.getId());
@@ -98,21 +100,45 @@ public class SellerController {
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("isFirst", page.isFirst());
         model.addAttribute("isLast", page.isLast());
-        model.addAttribute("totalIncome", orderService.getTotalIncomeByStatus("DELIVERED"));
+        
         
         return "seller/index";
     }
 
+    @Autowired
+    private SeleniumService seleniumService;
+    
+    public SellerController(SeleniumService seleniumService) {
+        this.seleniumService = seleniumService;
+    }
+    
     @GetMapping("/loadAddProduct")
-    public String loadAddProduct(Model m, @AuthenticationPrincipal UserDetails userDetails) {
-        String email = userDetails.getUsername(); // or userDetails.getEmail() if applicable
+    public String loadAddProduct(Model model, 
+                                  @AuthenticationPrincipal UserDetails userDetails, 
+                                  @RequestParam(value = "commodity", required = false) String commSelect) {
+        
+        // Retrieve the logged-in user's email and details
+        String email = userDetails.getUsername();
         UserDtls loggedInUser = userService.getUserByEmail(email);
-
+        
+        // Fetch categories for the dropdown
         List<Category> categories = categoryService.getAllCategory();
-        m.addAttribute("categories", categories);
-        m.addAttribute("sellerName", loggedInUser.getName()); // Add seller's name
+        model.addAttribute("categories", categories);
+        model.addAttribute("sellerName", loggedInUser.getName());
 
-        return "seller/add_product";
+        // If a commodity is selected, fetch market data for it
+        if (commSelect != null && !commSelect.isEmpty()) {
+            // Get market data for the selected commodity
+            SeleniumService.MarketData marketData = seleniumService.getMarketData(commSelect);
+            
+            model.addAttribute("max", marketData.getMax());
+            model.addAttribute("min", marketData.getMin());
+            model.addAttribute("avg", marketData.getAvg());
+            model.addAttribute("commodities", marketData.getCommodities());
+            model.addAttribute("selectedCommodity", commSelect); // To retain the selected commodity
+        }
+
+        return "seller/add_product"; // Return the view for adding a product
     }
 
     @PostMapping("/saveProduct")
@@ -147,7 +173,7 @@ public class SellerController {
     @GetMapping("/products")
     public String loadProducts(Model model,
                                @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
-                               @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+                               @RequestParam(name = "pageSize", defaultValue = "1000000000") int pageSize,
                                @RequestParam(name = "ch", defaultValue = "") String searchTerm,
                                @AuthenticationPrincipal UserDetails userDetails) {
 

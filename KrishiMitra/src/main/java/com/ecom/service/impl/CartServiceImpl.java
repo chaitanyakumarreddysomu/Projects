@@ -31,28 +31,41 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public Cart saveCart(Integer productId, Integer userId) {
+	    // Fetch user and product
+	    UserDtls userDtls = userRepository.findById(userId)
+	        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+	    Product product = productRepository.findById(productId)
+	        .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-		UserDtls userDtls = userRepository.findById(userId).get();
-		Product product = productRepository.findById(productId).get();
+	    // Check current cart status
+	    Cart cartStatus = cartRepository.findByProductIdAndUserId(productId, userId);
+	    Cart cart;
 
-		Cart cartStatus = cartRepository.findByProductIdAndUserId(productId, userId);
+	    if (cartStatus == null) {
+	        // If not in cart, create new entry
+	        cart = new Cart();
+	        cart.setProduct(product);
+	        cart.setUser(userDtls);
+	        cart.setQuantity(1); // Start with a quantity of 1
+	    } else {
+	        // If already in cart, increment quantity
+	        int updatedQuantity = cartStatus.getQuantity() + 1;
 
-		Cart cart = null;
+	        // Check if the updated quantity exceeds available stock
+	        if (updatedQuantity > product.getStock()) {
+	            updatedQuantity = product.getStock(); // Limit to available stock
+	        }
 
-		if (ObjectUtils.isEmpty(cartStatus)) {
-			cart = new Cart();
-			cart.setProduct(product);
-			cart.setUser(userDtls);
-			cart.setQuantity(1);
-			cart.setTotalPrice(1 * product.getDiscountPrice());
-		} else {
-			cart = cartStatus;
-			cart.setQuantity(cart.getQuantity() + 1);
-			cart.setTotalPrice(cart.getQuantity() * cart.getProduct().getDiscountPrice());
-		}
-		Cart saveCart = cartRepository.save(cart);
+	        // Update the existing cart item
+	        cart = cartStatus;
+	        cart.setQuantity(updatedQuantity);
+	    }
 
-		return saveCart;
+	    // Calculate total price based on updated quantity
+	    cart.setTotalPrice(cart.getQuantity() * product.getDiscountPrice());
+	    
+	    // Save the cart item
+	    return cartRepository.save(cart);
 	}
 
 	@Override
@@ -77,29 +90,42 @@ public class CartServiceImpl implements CartService {
 		Integer countByUserId = cartRepository.countByUserId(userId);
 		return countByUserId;
 	}
+	
+	@Override
+	public void removeFromCart(Integer cartId) {
+	    // Logic to remove the cart item by ID
+	    cartRepository.deleteById(cartId);
+	}
 
 	@Override
 	public void updateQuantity(String sy, Integer cid) {
+	    Cart cart = cartRepository.findById(cid)
+	        .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
 
-		Cart cart = cartRepository.findById(cid).get();
-		int updateQuantity;
+	    Product product = cart.getProduct(); // Get the product associated with the cart item
+	    int updateQuantity;
 
-		if (sy.equalsIgnoreCase("de")) {
-			updateQuantity = cart.getQuantity() - 1;
+	    if (sy.equalsIgnoreCase("de")) {
+	        updateQuantity = cart.getQuantity() - 1;
 
-			if (updateQuantity <= 0) {
-				cartRepository.delete(cart);
-			} else {
-				cart.setQuantity(updateQuantity);
-				cartRepository.save(cart);
-			}
+	        if (updateQuantity <= 0) {
+	            cartRepository.delete(cart);
+	        } else {
+	            cart.setQuantity(updateQuantity);
+	            cartRepository.save(cart);
+	        }
+	    } else {
+	        // Increment quantity
+	        updateQuantity = cart.getQuantity() + 1;
 
-		} else {
-			updateQuantity = cart.getQuantity() + 1;
-			cart.setQuantity(updateQuantity);
-			cartRepository.save(cart);
-		}
+	        // Check if the updated quantity exceeds available stock
+	        if (updateQuantity > product.getStock()) {
+	            updateQuantity = product.getStock(); // Limit to available stock
+	        }
 
+	        cart.setQuantity(updateQuantity);
+	        cartRepository.save(cart);
+	    }
 	}
 
 	

@@ -120,9 +120,12 @@
 					
 					<div class="col" th:each="p,c:${products}">
 						<div class="card">
+							<div th:if="${p.stock == 0}" class="position-absolute top-0 start-0 m-3 bg-danger text-white p-1" style="border-radius: 5px;">
+														            Out of Stock
+														        </div>
 							<img th:src="@{'/img/product_img/'+${p.image}}" class="card-img-top" alt="..." width="150px" height="150px">
 							<div class="">
-								<div class="position-absolute top-0 end-0 m-3 product-discount"><span class="">-[[${p.discount}]]%</span></div>
+								<div class="position-absolute top-0 end-0 m-3 product-discount bg-success"><span class="">-[[${p.discount}]]%</span></div>
 							</div>
 							<div class="card-body">
 								<h6 class="card-title cursor-pointer">[[${p.title}]]</h6>

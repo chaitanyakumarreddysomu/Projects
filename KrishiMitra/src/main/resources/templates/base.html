@@ -124,7 +124,8 @@
 									   		   
 	                               </select>
 	                               <input type="text" placeholder="Search for items..."  name="ch"/>
-
+							
+ 
 	                           </form>
 	                       </div>
 	                       <div class="header-action-right">
@@ -141,6 +142,7 @@
 	   			                   </th:block>
 								   
 								
+								   
 								   
 						 <th:block th:if="${user!=null}"> 
 							<th:block th:if="${user.role=='ROLE_USER'}">
@@ -371,7 +373,7 @@
 	                                    Stay home & get your daily <br />
 	                                    needs from our shop
 	                                </h2>
-	                                <p class="mb-45">Start You'r Daily Shopping with <span class="text-brand">Nest Mart</span></p>
+	                                <p class="mb-45">Start Your Daily Shopping with <span class="text-brand">Krishi Mitra</span></p>
 	                                <form class="form-subcriber d-flex">
 	                                    <input type="email" placeholder="Your emaill address" />
 	                                    <button class="btn" type="submit">Subscribe</button>
@@ -592,27 +594,6 @@
 		<script th:src="@{/assets/js/bot.js}"></script>
 		
 		<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-		<script>
-		  function makePayment(orderId) {
-		    var options = {
-		      "key": "YOUR_KEY_ID", // Enter the Key ID generated from the Dashboard
-		      "amount": "50000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 means 50000 paise = 500 INR
-		      "currency": "INR",
-		      "name": "Acme Corp",
-		      "description": "Test Transaction",
-		      "order_id": orderId, // Pass the `id` obtained in the response of `/createOrder`
-		      "handler": function (response){
-		        alert("Payment successful: " + response.razorpay_payment_id);
-		      },
-		      "prefill": {
-		        "name": "John Doe",
-		        "email": "john.doe@example.com",
-		        "contact": "9999999999"
-		      }
-		    };
-		    var paymentObject = new Razorpay(options);
-		    paymentObject.open();
-		  }
-		</script>
+		
 </body>
 </html>

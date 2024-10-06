@@ -1,145 +1,202 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	th:replace="~{adminBase::layout(~{::section})}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{adminBase::layout(~{::section})}">
 <head>
-<meta charset="ISO-8859-1">
-<title>Add seller</title>
+    <meta charset="ISO-8859-1">
+    <title>Add Seller</title>
 </head>
 <body>
-	<section>
-		<div class="page-wrapper">
-			
-			<!-- alert start-->
-			<th:block th:if="${session.succMsg}">
-						    <div class="alert alert-success alert-dismissible fade show py-2 alert-custom" role="alert">
-						        <div class="d-flex align-items-center">
-						            <div class="font-35 text-white"><i class='bx bxs-check-circle'></i></div>
-						            <div class="ms-3">
-						                <h6 class="mb-0 text-white" th:text="${session.succMsg}"></h6>
-						            </div>
-						        </div>
-						        <button type="button" class="btn-close" aria-label="Close"></button>
-						    </div>
-						</th:block>
-						<th:block th:if="${session.errorMsg}">
-						    <div class="alert alert-danger alert-dismissible fade show py-2 alert-custom" role="alert">
-						        <div class="d-flex align-items-center">
-						            <div class="font-35 text-white"><i class='bx bxs-error-circle'></i></div>
-						            <div class="ms-3">
-						                <h6 class="mb-0 text-white" th:text="${session.errorMsg}"></h6>
-						            </div>
-						        </div>
-						        <button type="button" class="btn-close" aria-label="Close"></button>
-						    </div>
-						</th:block>
-			
-			
-			<!-- alert end-->
-		
-			
-			
-			<div class="page-content">
-				<!--breadcrumb-->
-				<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-					<div class="breadcrumb-title pe-3">SELLER</div>
-					<div class="ps-3">
-						<nav aria-label="breadcrumb">
-							<ol class="breadcrumb mb-0 p-0">
-								<li class="breadcrumb-item"><a href="/seller/"><i class="bx bx-home-alt"></i></a>
-								</li>
-								<li class="breadcrumb-item active" aria-current="page">Add Product</li>
-							</ol>
-						</nav>
-					</div>
-					<div class="ms-auto">
-						
-					</div>
-				</div>
-				<!--end breadcrumb-->
-				<div class="container">
-					<div class="main-body">
-						<div class="row">
-							<div class="col-lg-16">
-								<div class="card">
-									
-									<div class="card-body">
-										<form action="/seller/saveProduct" method="post"
-                              enctype="multipart/form-data">
-                            <!-- Seller Name (Non-editable) -->
-                            <div class="mb-3">
-                                <label>Seller Name</label>
-                                <input type="text" name="sellerName" class="form-control" 
-                                       th:value="${sellerName}" readonly>
-                            </div>
-							
-                            <div class="mb-3">
-                                <label>Enter Title</label>
-                                <input type="text" name="title" class="form-control">
-                            </div>
+    <section>
+        <div class="page-wrapper">
 
-                            <div class="mb-3">
-                                <label>Enter Description</label>
-                                <textarea rows="3" class="form-control" name="description"></textarea>
-                            </div>
-							<div class="row">
-	                            <div class="mb-3 col">
-	                                <label>Category</label>
-	                                <select class="form-control" name="category">
-	                                    <option th:each="c:${categories}">[[${c.name}]]</option>
-	                                </select>
-									
-	                            </div>
-	
-	                            <div class="mb-3 col">
-	                                <label>Enter Price</label>
-	                                <input type="number" name="price" class="form-control">
-	                            </div>
-							</div>
-                            <div class="mb-3">
-                                <label>Status</label>
+            <!-- Alert Messages -->
+            <th:block th:if="${session.succMsg}">
+                <div class="alert alert-success alert-dismissible fade show py-2 alert-custom" role="alert">
+                    <div class="d-flex align-items-center">
+                        <div class="font-35 text-white"><i class='bx bxs-check-circle'></i></div>
+                        <div class="ms-3">
+                            <h6 class="mb-0 text-white" th:text="${session.succMsg}"></h6>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" aria-label="Close"></button>
+                </div>
+            </th:block>
+            <th:block th:if="${session.errorMsg}">
+                <div class="alert alert-danger alert-dismissible fade show py-2 alert-custom" role="alert">
+                    <div class="d-flex align-items-center">
+                        <div class="font-35 text-white"><i class='bx bxs-error-circle'></i></div>
+                        <div class="ms-3">
+                            <h6 class="mb-0 text-white" th:text="${session.errorMsg}"></h6>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" aria-label="Close"></button>
+                </div>
+            </th:block>
 
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" checked
-                                           value="true" name="isActive" id="flexRadioDefault1">
-                                    <label class="form-check-label" for="flexRadioDefault1">
-                                        Active
-                                    </label>
+            <div class="page-content">
+                <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                    <div class="breadcrumb-title pe-3">SELLER</div>
+                    <div class="ps-3">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0 p-0">
+                                <li class="breadcrumb-item"><a href="/seller/"><i class="bx bx-home-alt"></i></a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Add Product</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="main-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-body">
+										
+										
+										
+										<div class="commodity">
+											
+											
+											
+										<form id="priceForm" action="/seller/loadAddProduct" method="get">
+											<div class="mb-3 row">
+                                       		 <div class="col">
+										    <label>Commodity</label>
+										    <select class="form-control" name="commodity" id="commoditySelect" >
+										        <option th:each="commodity : ${commodities}" th:value="${commodity}" th:text="${commodity}" th:selected="${commodity == selectedCommodity}"></option>
+										    </select>
+											</div>
+											<div class="col">
+												<button type="submit" class="btn btn-light px-5 mt-4" name="submit">
+			                                                <i class='bx bx-data fs-5'></i> Fetch Price
+			                                            </button>
+											</div></div>
+
+										    <!--<button type="submit" class="btn btn-primary mt-2">Fetch Price</button>-->
+											
+										</form>
+										<br>
+										<div class="mb-3 row">
+											<div class="col">
+												<label>Price Quality</label>
+												    <select class="form-control" id="priceQualitySelect">
+														<option >--Select--</option>
+												        <option value="good">Good</option>
+												        <option value="bad">Bad</option>
+												        <option value="average">Average</option>
+												    </select>
+											</div>
+											<div class="col">
+											
+											</div>
+											</div>
+											<br>
+										<h1><span th:text="${commodity}"></span></h1>
+										<p id="maxPrice" style="display:none;">Max Price: <span th:text="${max}"></span></p>
+										<p id="minPrice" style="display:none;">Min Price: <span th:text="${min}"></span></p>
+										<p id="avgPrice" style="display:none;">Average Price: <span th:text="${avg}"></span></p>
+
+										<!--<div id="displayPrices">
+										    <h3>Displayed Price:</h3>
+										    <p id="displayedPrice"></p>
+										</div>-->
+
+                                        <form action="/seller/saveProduct" method="post" enctype="multipart/form-data" id="market-data-form">
+                                            <div class="mb-3">
+												
+                                                <label>Seller Name</label>
+                                                <input type="text" name="sellerName" class="form-control" th:value="${sellerName}" readonly>
+												
+											
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label>Enter Title</label>
+                                                <input type="text" name="title" class="form-control" required>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label>Enter Description</label>
+                                                <textarea rows="3" class="form-control" name="description" required></textarea>
+                                            </div>
+
+                                            <div class="mb-3 row">
+                                                <div class="col">
+                                                    <label>Category</label>
+                                                    <select class="form-control" name="category">
+                                                        <option th:each="c : ${categories}" th:text="${c.name}"></option>
+                                                    </select>
+                                                </div>
+                                                <div class="col">
+                                                    <label>Enter Price</label>
+                                                    <!--<input type="number" name="price" th:value="${max}" class="form-control" readonly>-->
+													<input type="text" name="price" id="displayedPrice" class="form-control" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label>Status</label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" checked value="true" name="isActive" id="flexRadioDefault1">
+                                                    <label class="form-check-label" for="flexRadioDefault1">Active</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="isActive" value="false" id="flexRadioDefault2">
+                                                    <label class="form-check-label" for="flexRadioDefault2">Inactive</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 row">
+                                                <div class="col">
+                                                    <label>Enter Stock</label>
+                                                    <input type="text" name="stock" class="form-control" required>
+                                                </div>
+                                                <div class="col">
+                                                    <label>Upload Image</label>
+                                                    <input type="file" name="file" class="form-control" required>
+                                                </div>
+                                            </div>
+											
+
+                                            <button type="submit" class="btn btn-light px-5 mt-4" name="submit">
+                                                <i class='bx bx-category fs-5'></i> Add Product
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="isActive"
-                                           value="false" id="flexRadioDefault2">
-                                    <label class="form-check-label" for="flexRadioDefault2">
-                                        Inactive
-                                    </label>
-                                </div>
-
                             </div>
-                            <div class="row">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		<script>
+			document.getElementById('priceQualitySelect').addEventListener('change', function() {
+			        const quality = this.value;
+			        const maxPrice = document.querySelector('#maxPrice span').innerText;
+			        const minPrice = document.querySelector('#minPrice span').innerText;
+			        const avgPrice = document.querySelector('#avgPrice span').innerText;
 
-                                <div class="mb-3 col">
-                                    <label>Enter Stock</label>
-                                    <input type="text" name="stock" class="form-control">
-                                </div>
+			        let displayedPrice;
 
-                                <div class="mb-3 col">
-                                    <label>Upload Image</label>
-                                    <input type="file" name="file" class="form-control">
-                                </div>
-                            </div>
-                           
-							<button type="submit" class="btn btn-light px-5 mt-4 " name="submit"><i class='bx bx-category fs-5' ></i>Add Product</button>
-                        </form>
+			        switch (quality) {
+			            case 'good':
+			                displayedPrice = maxPrice; // Only the price
+			                break;
+			            case 'bad':
+			                displayedPrice = minPrice; // Only the price
+			                break;
+			            case 'average':
+			                displayedPrice = avgPrice; // Only the price
+			                break;
+			            default:
+			                displayedPrice = '';
+			                break;
+			        }
 
-									</div>
-								</div>
-								
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-	</section>
+			        document.getElementById('displayedPrice').value = displayedPrice; // Set the input value
+			    });
+		</script>
+    </section>
 </body>
 </html>

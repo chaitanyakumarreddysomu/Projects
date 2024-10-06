@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,72 +80,68 @@ public class AdminController {
 	}
 
 	@GetMapping("/")
-	public String index(Model m, @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
-			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,@RequestParam(defaultValue = "") String ch) {
-		
-		// for  total product count in index page
-		long totalProductCount = productService.getTotalProductCount();
-		 m.addAttribute("totalProductCount", totalProductCount);
-		 
-		// for total orders count in index page
-		 Page<ProductOrder> page1 = orderService.getAllOrdersPagination(pageNo, pageSize);
-		 m.addAttribute("totalElements", page1.getTotalElements());
-		 
-		// for total category count in index page
-		 Page<Category> page2 = categoryService.getAllCategorPagination(pageNo, pageSize);
-		m.addAttribute("totalElements", page2.getTotalElements());
-		
-		
-		// for users count count in index page
-		List<UserDtls> users = null;
+	public String index(Model m, 
+	                    @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
+	                    @RequestParam(name = "pageSize", defaultValue = "1000000") Integer pageSize,
+	                    @RequestParam(defaultValue = "") String ch) {
+
+	    // For total product count in index page
+	    long totalProductCount = productService.getTotalProductCount();
+	    m.addAttribute("totalProductCount", totalProductCount);
+
+	    // For total orders count in index page
+	    Page<ProductOrder> page1 = orderService.getAllOrdersPagination(pageNo, pageSize);
+	    m.addAttribute("totalElements", page1.getTotalElements());
+
+	    // For total category count in index page
+	    Page<Category> page2 = categoryService.getAllCategorPagination(pageNo, pageSize);
+	    m.addAttribute("totalElements", page2.getTotalElements());
+
+	    // For users count in index page
 	    long countType1 = userService.countUsers("ROLE_USER");
 	    long countType2 = userService.countUsers("ROLE_SELLER");
 	    long countType3 = userService.countUsers("ROLE_ADMIN");
-	    
-		m.addAttribute("countType1", countType1);
+
+	    m.addAttribute("countType1", countType1);
 	    m.addAttribute("countType2", countType2);
 	    m.addAttribute("countType3", countType3);
-	    
-	    
-	    
-	    // fetch by order service
-	    
-	    long totalPending = orderService.countOrdersByStatus("In Progress");
-        long totalDelivered = orderService.countOrdersByStatus("DELIVERED");
-        long totalCancelled = orderService.countOrdersByStatus("CANCELLED");
 
-        m.addAttribute("totalPending", totalPending);
-        m.addAttribute("totalDelivered", totalDelivered);
-        m.addAttribute("totalCancelled", totalCancelled);
-        
-        
-        //Total Income from Delivered Orders
-        
-        m.addAttribute("totalIncome", orderService.getTotalIncomeByStatus("DELIVERED"));
-        
-        
-        
-        // display orders in admin page
-        m.addAttribute("orders", page1.getContent());
-        m.addAttribute("pageNo", page1.getNumber());
-        m.addAttribute("pageSize", pageSize);
-        m.addAttribute("totalElements", page1.getTotalElements());
-        m.addAttribute("totalPages", page1.getTotalPages());
-        m.addAttribute("isFirst", page1.isFirst());
-        m.addAttribute("isLast", page1.isLast());
-        
-        //search in admin page
-        
-        Page<Product> page;
+	    // Fetch orders by order service
+	    long totalPending = orderService.countOrdersByStatus("In Progress");
+	    long totalDelivered = orderService.countOrdersByStatus("DELIVERED");
+	    long totalCancelled = orderService.countOrdersByStatus("CANCELLED");
+
+	    m.addAttribute("totalPending", totalPending);
+	    m.addAttribute("totalDelivered", totalDelivered);
+	    m.addAttribute("totalCancelled", totalCancelled);
+
+	    // Total Income from Delivered Orders
+	    m.addAttribute("totalIncome", orderService.getTotalIncomeByStatus("DELIVERED"));
+
+	    // Display orders in admin page, sorted by latest first
+	    List<ProductOrder> orders = orderService.getAllOrders(); // Fetch all orders without pagination
+	    orders.sort(Comparator.comparing(ProductOrder::getOrderDate).reversed()); // Sort by order date descending
+	    m.addAttribute("orders", orders);
+
+	    // Add pagination attributes
+	    m.addAttribute("pageNo", page1.getNumber());
+	    m.addAttribute("pageSize", pageSize);
+	    m.addAttribute("totalElements", page1.getTotalElements());
+	    m.addAttribute("totalPages", page1.getTotalPages());
+	    m.addAttribute("isFirst", page1.isFirst());
+	    m.addAttribute("isLast", page1.isLast());
+
+	    // Search in admin page
+	    Page<Product> page;
 	    if (ch != null && !ch.isEmpty()) {
 	        page = productService.searchProductPagination(pageNo, pageSize, ch);
 	    } else {
 	        page = productService.getAllProductsPagination(pageNo, pageSize);
 	    }
-        
-		return "admin/index";
-		
+
+	    return "admin/index";
 	}
+
 
 	@GetMapping("/loadAddProduct")
 	public String loadAddProduct(Model m) {
@@ -156,7 +153,7 @@ public class AdminController {
 	@GetMapping("/category")
 	public String categoryPage(Model model, 
 	                            @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
-	                            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+	                            @RequestParam(name = "pageSize", defaultValue = "1000000") Integer pageSize) {
 	    Page<Category> page = categoryService.getAllCategorPagination(pageNo, pageSize);
 	    List<Category> categories = page.getContent();
 

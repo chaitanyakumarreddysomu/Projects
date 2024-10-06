@@ -1,6 +1,7 @@
 package com.ecom.controller;
 
 import java.security.Principal;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +121,11 @@ public class UserController {
 	}
 
 
-
+	@GetMapping("/cartRemove")
+	public String removeFromCart(@RequestParam Integer cid) {
+	    cartService.removeFromCart(cid); // Assuming you have this method in your service
+	    return "redirect:/user/cart";
+	}
 
 	@GetMapping("/cartQuantityUpdate")
 	public String updateCartQuantity(@RequestParam String sy, @RequestParam Integer cid) {
@@ -190,11 +195,16 @@ public class UserController {
 
 	@GetMapping("/profile")
 	public String profile(Model m, Principal p) {
-		UserDtls loginUser = getLoggedInUserDetails(p);
-		List<ProductOrder> orders = orderService.getOrdersByUser(loginUser.getId());
-		m.addAttribute("orders", orders);
-		return "/user/profile";
+	    UserDtls loginUser = getLoggedInUserDetails(p);
+	    List<ProductOrder> orders = orderService.getOrdersByUser(loginUser.getId());
+
+	    // Sort orders by order date in descending order
+	    orders.sort(Comparator.comparing(ProductOrder::getOrderDate).reversed());
+
+	    m.addAttribute("orders", orders);
+	    return "/user/profile";
 	}
+
 
 	@PostMapping("/update-profile")
 	public String updateProfile(@ModelAttribute UserDtls user, @RequestParam MultipartFile img, HttpSession session) {

@@ -1,5 +1,8 @@
 package com.ecom.model;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,6 +48,9 @@ public class Product {
 	private Boolean isActive;
 	
 	 private Integer sellerId; // Seller ID field
+	 
+	  @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+	    private List<Review> reviews;
 
 	    // Getters and setters for other fields
 
@@ -54,6 +61,7 @@ public class Product {
 	    public void setSellerId(Integer sellerId) {
 	        this.sellerId = sellerId;
 	    }
+	    
 
 	public Integer getId() {
 		return id;
@@ -133,6 +141,14 @@ public class Product {
 
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public List<Review> getReviews() {
+		return reviews;
+	}
+
+	public void setReviews(List<Review> reviews) {
+		this.reviews = reviews;
 	}
 	
 	

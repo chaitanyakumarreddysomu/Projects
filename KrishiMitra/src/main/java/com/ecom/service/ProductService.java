@@ -50,4 +50,6 @@ public interface ProductService {
 	
 
 	public Page<Product> searchProducts(String query, Pageable pageable);
+	
+	
 }

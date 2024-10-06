@@ -719,6 +719,7 @@
             });
         }
     });
+	
 
     /*--- VSticker ----*/
     $("#news-flash").vTicker({
@@ -729,4 +730,21 @@
         showItems: 1
     });
 })(jQuery);
+
+document.querySelectorAll('.input-group-text').forEach((toggle) => {
+    toggle.addEventListener('click', function () {
+        const input = this.previousElementSibling;
+        const icon = this.querySelector('i');
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        } else {
+            input.type = "password";
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        }
+    });
+});
 

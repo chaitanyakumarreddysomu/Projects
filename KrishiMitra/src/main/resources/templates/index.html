@@ -85,63 +85,56 @@
 		                       <!--End nav-tabs-->
 							   
 							 
-		                    <div class="row product-grid">
-							
-		                       <div class="col-lg-1-5 col-md-4 col-12 col-sm-6" th:each="p:${products}">
-		                           <div class="product-cart-wrap mb-30">
-		                               <div class="product-img-action-wrap">
-		                                   <div class="product-img product-img-zoom">
-		                                       <a th:href="@{'/product/'+${p.id}}">
-												<!--<img alt="" th:src="@{'/img/product_img/'+${p.image}}" width="150px" height="150px">-->
-												<img alt="" th:src="@{'/img/product_img/'+${p.image}}" width="150px" height="150px" style="object-fit: 'contain';">
-												
-																		
-		                                           
-		                                       </a>
-		                                   </div>
-		                                   
-		                                   <div class="product-badges product-badges-position product-badges-mrg">
-		                                       <span class="hot">[[${p.discount}]]% off</span>
-		                                   </div>
-		                               </div>
-		                               <div class="product-content-wrap">
-		                                   <div class="product-category">
-		                                       <a href='shop-grid-right.html'>[[${p.category}]]</a>
-		                                   </div>
-		                                   <h2><a style="display: -webkit-box;
-										   -webkit-line-clamp: 3;
-										   -webkit-box-orient: vertical;
-										   overflow: hidden;
-										   text-overflow: ellipsis;" th:href="@{'/product/'+${p.id}}">[[${p.title}]]</a></h2>
-		                                   
-		                                   
-		                                   <div class="product-card-bottom">
-		                                       <div class="product-price">
-		                                           <span>[[${p.discountPrice}]]</span>
-		                                           <span class="old-price">[[${p.price}]]</span>
-		                                       </div>
-											   
-		                                      
-		                                   </div>
-		                               </div>
-		                           </div>
-		                       </div>
-		                       
-							   <th:block th:if="${productsSize == 0}">
-							       <div class="no-items-found">
-							           
-									<h3 class="mb-150 mt-100 text-capitalize">
-							           It looks like we don’t have any products for 
-							           <span th:text="${searchTerm}" style="font-weight: bold; color: #3bb77e;"></span>
-							           right now.
-							       </h3>
-									
-									   
-									   
-									   
-							       </div>
-							   </th:block>
-		                   </div>
+		                   <div class="row product-grid">
+    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6" th:each="p, iterStat : ${products}">
+        <div class="product-cart-wrap mb-30" th:if="${iterStat.index < 20}">
+            <div class="product-img-action-wrap">
+                <div class="product-img product-img-zoom">
+                    <a th:href="@{'/product/'+${p.id}}">
+                        <img alt="" th:src="@{'/img/product_img/'+${p.image}}" width="150px" height="150px" style="object-fit: contain;">
+                    </a>
+                </div>
+
+                <div class="product-badges product-badges-position product-badges-mrg">
+                    <span class="hot">[[${p.discount}]]% off</span>
+                </div>
+            </div>
+            <div class="product-content-wrap">
+                <div class="product-category">
+                    <a th:href="@{'/products?category=' + ${p.category}}">[[${p.category}]]</a>
+                </div>
+                <h2>
+                    <a style="display: -webkit-box;
+                            -webkit-line-clamp: 3;
+                            -webkit-box-orient: vertical;
+                            overflow: hidden;
+                            text-overflow: ellipsis;" 
+                       th:href="@{'/product/'+${p.id}}">[[${p.title}]]</a>
+                </h2>
+
+                <div class="product-card-bottom">
+                    <div class="product-price">
+                        <span>[[${p.discountPrice}]]</span>
+                        <span class="old-price">[[${p.price}]]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:if="${productsSize == 0}">
+        <div class="no-items-found">
+            <h3 class="mb-150 mt-100 text-capitalize">
+                It looks like we don’t have any products for 
+                <span th:text="${searchTerm}" style="font-weight: bold; color: #3bb77e;"></span>
+                right now.
+            </h3>
+        </div>
+    </th:block>
+
+    
+</div>
+
 		                       <!--End tab-content-->
 		                   </section>
 		                  
@@ -155,7 +148,7 @@
 		                                           Everyday Fresh & <br />Clean with Our<br />
 		                                           Products
 		                                       </h4>
-		                                       <a class='btn btn-xs' href='shop-grid-right.html'>Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+		                                       <a class='btn btn-xs' href='/products'>Shop Now <i class="fi-rs-arrow-small-right"></i></a>
 		                                   </div>
 		                               </div>
 		                           </div>
@@ -167,7 +160,7 @@
 		                                           Make your Breakfast<br />
 		                                           Healthy and Easy
 		                                       </h4>
-		                                       <a class='btn btn-xs' href='shop-grid-right.html'>Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+		                                       <a class='btn btn-xs' href='/products'>Shop Now <i class="fi-rs-arrow-small-right"></i></a>
 		                                   </div>
 		                               </div>
 		                           </div>
@@ -176,7 +169,7 @@
 		                                   <img src="assets/imgs/banner/banner-3.png" alt="" />
 		                                   <div class="banner-text">
 		                                       <h4>The best Organic <br />Products Online</h4>
-		                                       <a class='btn btn-xs' href='shop-grid-right.html'>Shop Now <i class="fi-rs-arrow-small-right"></i></a>
+		                                       <a class='btn btn-xs' href='/products'>Shop Now <i class="fi-rs-arrow-small-right"></i></a>
 		                                   </div>
 		                               </div>
 		                           </div>
@@ -185,27 +178,27 @@
 		                   <!--End banners-->
 		               </div>
 					   <div class="col-lg-1-5 primary-sidebar sticky-sidebar">
-					   		                   <div class="sidebar-widget widget-category-2 mb-30">
-					   		                       <h5 class="section-title style-1 mb-30">Category</h5>
-					   		                       <ul>
-					   		                           <li>
-					   		                               <a href="/products" th:classappend="${paramValue==''} ? 'active':''"  aria-current="true">All</a>
-					   		                           </li>
-					   		                           
-					   								   
-					   								   <li th:each="c : ${categories}">
-					   								               <a th:href="@{'/products?category=' + ${c.name}}"
-					   								                  th:classappend="${paramValue == c.name} ? 'active':''">
-					   								                   
-					   								                   [[${c.name}]]
-					   								               </a>
-					   								               
-					   								           </li>
-					   								   
-					   								   
-					   		                       </ul>
-					   		                   </div>
-					   		                   <!-- Fillter By Price -->
+					   		                  <div class="sidebar-widget widget-category-2 mb-30">
+    <h5 class="section-title style-1 mb-30">Category</h5>
+    <ul>
+        <a href="/products" th:classappend="${paramValue==''} ? 'active':''" aria-current="true">
+            <li> All </li>
+        </a>
+
+		<div>
+		    <ul>
+		        <li th:each="c : ${categories}">
+		            <a th:href="@{'/products?category=' + ${c.name}}"
+		               th:classappend="${paramValue == c.name} ? 'active':''">
+		                [[${c.name}]]
+		            </a>
+		        </li>
+		    </ul>
+		</div>
+    </ul>
+</div>
+
+					   		                   
 					   						   
 
 					   		                   <!-- Product sidebar Widget -->

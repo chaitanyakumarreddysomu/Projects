@@ -12,10 +12,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.ecom.model.Cart;
 import com.ecom.model.OrderAddress;
 import com.ecom.model.OrderRequest;
+import com.ecom.model.Product;
 import com.ecom.model.ProductOrder;
 
 import com.ecom.repository.CartRepository;
@@ -30,6 +34,7 @@ import com.razorpay.RazorpayClient;
 @Service
 public class OrderServiceImpl implements OrderService {
 
+	private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
 	@Autowired
 	private ProductOrderRepository orderRepository;
@@ -44,43 +49,50 @@ public class OrderServiceImpl implements OrderService {
 	private CommonUtil commonUtil;
 
 	@Override
-	public void saveOrder(Integer userid, OrderRequest orderRequest) throws Exception {
+    @Transactional
+    public void saveOrder(Integer userid, OrderRequest orderRequest) throws Exception {
+        List<Cart> carts = cartRepository.findByUserId(userid);
+        
+        for (Cart cart : carts) {
+            Product product = cart.getProduct();
+            int availableQuantity = product.getStock();
 
-		List<Cart> carts = cartRepository.findByUserId(userid);
+            if (cart.getQuantity() > availableQuantity) {
+            	logger.error("Not enough stock for product: {}", product.getTitle());
+                throw new Exception("Not enough stock for product: " + product.getTitle());
+            }
 
-		for (Cart cart : carts) {
+            ProductOrder order = new ProductOrder();
+            order.setOrderId(UUID.randomUUID().toString());
+            order.setOrderDate(LocalDate.now());
+            order.setProduct(product);
+            order.setPrice(product.getDiscountPrice());
+            order.setQuantity(cart.getQuantity());
+            order.setUser(cart.getUser());
+            order.setStatus(OrderStatus.IN_PROGRESS.getName());
+            order.setPaymentType(orderRequest.getPaymentType());
 
-			ProductOrder order = new ProductOrder();
+            OrderAddress address = new OrderAddress();
+            address.setFirstName(orderRequest.getFirstName());
+            address.setLastName(orderRequest.getLastName());
+            address.setEmail(orderRequest.getEmail());
+            address.setMobileNo(orderRequest.getMobileNo());
+            address.setAddress(orderRequest.getAddress());
+            address.setCity(orderRequest.getCity());
+            address.setState(orderRequest.getState());
+            address.setPincode(orderRequest.getPincode());
+            order.setOrderAddress(address);
 
-			order.setOrderId(UUID.randomUUID().toString());
-			order.setOrderDate(LocalDate.now());
+            orderRepository.save(order);
 
-			order.setProduct(cart.getProduct());
-			order.setPrice(cart.getProduct().getDiscountPrice());
+            // Decrease the product quantity
+            product.setStock(availableQuantity - cart.getQuantity());
+            productRepository.save(product);
 
-			order.setQuantity(cart.getQuantity());
-			order.setUser(cart.getUser());
-
-			order.setStatus(OrderStatus.IN_PROGRESS.getName());
-			order.setPaymentType(orderRequest.getPaymentType());
-
-			OrderAddress address = new OrderAddress();
-			address.setFirstName(orderRequest.getFirstName());
-			address.setLastName(orderRequest.getLastName());
-			address.setEmail(orderRequest.getEmail());
-			address.setMobileNo(orderRequest.getMobileNo());
-			address.setAddress(orderRequest.getAddress());
-			address.setCity(orderRequest.getCity());
-			address.setState(orderRequest.getState());
-			address.setPincode(orderRequest.getPincode());
-
-			order.setOrderAddress(address);
-
-			ProductOrder saveOrder = orderRepository.save(order);
-//			commonUtil.sendMailForProductOrder(saveOrder, "success");
-		}
-	}
-
+            // Uncomment and implement your email notification here
+            // commonUtil.sendMailForProductOrder(order, "success");
+        }
+    }
 	@Override
 	public List<ProductOrder> getOrdersByUser(Integer userId) {
 		List<ProductOrder> orders = orderRepository.findByUserId(userId);

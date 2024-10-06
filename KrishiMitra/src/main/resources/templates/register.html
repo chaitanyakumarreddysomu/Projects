@@ -7,6 +7,7 @@
 </head>
 <body>
 	<section>
+		
 		<!--assistant button-->
 				<button id="voice-button" class="text-white " style="position: fixed; z-index: 2147483647; right: 25px; bottom: 70px; 
 				width: 50px; height: 50px; border: none; border-radius: 100%;
@@ -109,16 +110,25 @@
 												 
 												 
 												 <div class="row form-group">
-												 									<div class="col">
-												 										<label class="form-label">Password</label> <input required="required"
-												 											class="form-control" name="password" type="password" id="pass">
-												 									</div>
+													<div class="col">
+													    <label class="form-label">Password</label>
+													    <div class="input-group">
+													        <input required="required" class="form-control" name="password" type="password" id="pass">
+													        <span class="input-group-text" id="togglePassword1">
+													            <i class="fa-solid fa-eye-slash" id="eyeIcon1"></i>
+													        </span>
+													    </div>
+													</div>
 
-												 									<div class="col">
-												 										<label class="form-label">Confirm Password</label> <input
-												 											required="required" class="form-control" name="confirmpassword"
-												 											type="password">
-												 									</div>
+													<div class="col">
+													    <label class="form-label">Confirm Password</label>
+													    <div class="input-group">
+													        <input required="required" class="form-control" name="confirmpassword" type="password" id="confirmPass">
+													        <span class="input-group-text" id="togglePassword2">
+													            <i class="fa-solid fa-eye-slash" id="eyeIcon2"></i>
+													        </span>
+													    </div>
+													</div>
 
 												 								</div>
 

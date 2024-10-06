@@ -193,6 +193,9 @@ public class ProductServiceImpl implements ProductService {
         String keyword = extractKeywords(query);
         return productRepository.findByTitleContainingIgnoreCaseOrderByDiscountDesc(keyword, pageable);
     }
+	
+
+	
 
     private String extractKeywords(String query) {
     	// Normalize the query by converting to lowercase and removing common words

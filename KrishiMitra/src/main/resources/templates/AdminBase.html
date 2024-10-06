@@ -116,7 +116,7 @@
 									<li th:if="${user.role=='ROLE_ADMIN'}"><a class="dropdown-item d-flex align-items-center" href="/admin/add-admin"><i class="bx bx-user-plus fs-5"></i></i><span>Add Admins</span></a></li>
 						            <li th:if="${user.role=='ROLE_ADMIN'}"><a class="dropdown-item d-flex align-items-center" href="/admin/add-seller"><i class='bx bx-store fs-5'></i><span>Add Sellers</span></a></li>
 						            <li th:if="${user.role=='ROLE_ADMIN'}"><a class="dropdown-item d-flex align-items-center" href="/admin/category"><i class='bx bx-category fs-5' ></i><span>Categories</span></a></li>
-									<li th:if="${user.role=='ROLE_SELLER'}"><a class="dropdown-item d-flex align-items-center" href="/seller/loadAddProduct"><i class='bx bx-category fs-5' ></i><span>Add Products</span></a></li>
+									<li th:if="${user.role=='ROLE_SELLER'}"><a class="dropdown-item d-flex align-items-center" href="/seller/loadAddProduct?commodity=Rice"><i class='bx bx-category fs-5' ></i><span>Add Products</span></a></li>
 						            
 								</th:block> 
 						            
@@ -214,7 +214,78 @@
 				    });
 				</script>
 
+<script>
+	// Static data for states and commodities
+	const states = ["Karnataka", "State2", "State3"]; // Add your states here
+	const commodities = ["Rice", "Commodity2", "Commodity3"]; // Add your commodities here
 
+	// Populate the dropdowns with static data on page load
+	window.onload = function() {
+	    populateDropdown("state-select", states);
+	    populateDropdown("commodity-select", commodities);
+	};
+
+	// Function to populate a dropdown with static data
+	function populateDropdown(dropdownId, data) {
+	    const dropdown = document.getElementById(dropdownId);
+	    dropdown.innerHTML = ""; // Clear existing options
+	    data.forEach(item => {
+	        const option = document.createElement("option");
+	        option.value = item;
+	        option.textContent = item;
+	        dropdown.appendChild(option);
+	    });
+	};
+
+	// Fetch prices based on selected state and commodity
+	document.getElementById("fetch-prices").addEventListener("click", function() {
+	    const state = document.getElementById("state-select").value;
+	    const commodity = document.getElementById("commodity-select").value;
+
+	    // Validate selections
+	    if (!state || !commodity) {
+	        alert("Please select both state and commodity.");
+	        return;
+	    }
+
+	    // Simulate fetching prices (replace with actual API call if needed)
+	    fetchPrices(state, commodity);
+	});
+
+	// Function to simulate fetching prices
+	function fetchPrices(state, commodity) {
+	    // You can replace this with an actual API call if needed
+	    const simulatedPrices = {
+	        "State1": {
+	            "Commodity1": { min: 100, max: 150, model: 125 },
+	            "Commodity2": { min: 200, max: 250, model: 225 }
+	        },
+	        "State2": {
+	            "Commodity1": { min: 110, max: 160, model: 135 },
+	            "Commodity2": { min: 210, max: 260, model: 235 }
+	        },
+	        // Add more simulated data as needed
+	    };
+
+	    const priceInfo = simulatedPrices[state][commodity];
+	    const priceDisplay = document.getElementById("price-display");
+	    priceDisplay.innerHTML = ""; // Clear previous results
+
+	    if (priceInfo) {
+	        priceDisplay.innerHTML = `
+	            City: ${state} City<br>
+	            Min Price: ${priceInfo.min}<br>
+	            Max Price: ${priceInfo.max}<br>
+	            Model Price: ${priceInfo.model}<br>
+	            Date: ${new Date().toLocaleDateString()}
+	        `;
+	    } else {
+	        priceDisplay.textContent = "No price data available.";
+	    }
+	}
+
+
+</script>
 			
 
 </body>
