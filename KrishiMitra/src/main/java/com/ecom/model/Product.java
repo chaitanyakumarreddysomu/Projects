@@ -8,8 +8,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,134 +21,151 @@ import lombok.Setter;
 @Entity
 public class Product {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-	@Column(length = 500)
-	private String title;
+    @Column(length = 500)
+    private String title;
 
-	@Column(length = 5000)
-	private String description;
+    @Column(length = 5000)
+    private String description;
 
-	private String category;
+    private String category;
 
-	private Double price;
+    private Double price;
 
-	private int stock;
+    private int stock;
 
-	private String image;
+    private String image;
 
-	private int discount;
-	
-	private Double discountPrice;
-	
-	private Boolean isActive;
-	
-	 private Integer sellerId; // Seller ID field
-	 
-	  @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-	    private List<Review> reviews;
+    private int discount;
 
-	    // Getters and setters for other fields
+    private Double discountPrice;
 
-	    public Integer getSellerId() {
-	        return sellerId;
-	    }
+    private Boolean isActive;
 
-	    public void setSellerId(Integer sellerId) {
-	        this.sellerId = sellerId;
-	    }
-	    
+    private String commodity; // Added commodity field
 
-	public Integer getId() {
-		return id;
-	}
+    @Column(name = "price_last_updated") // Custom column name for clarity
+    private String priceLastUpdated; // Changed to String type
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    private Integer sellerId; // Seller ID field
 
-	public String getTitle() {
-		return title;
-	}
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Review> reviews;
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    // Getters and setters for other fields
 
-	public String getDescription() {
-		return description;
-	}
+    public Integer getSellerId() {
+        return sellerId;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setSellerId(Integer sellerId) {
+        this.sellerId = sellerId;
+    }
 
-	public String getCategory() {
-		return category;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setCategory(String category) {
-		this.category = category;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Double getPrice() {
-		return price;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public void setPrice(Double price) {
-		this.price = price;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public int getStock() {
-		return stock;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setStock(int stock) {
-		this.stock = stock;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getImage() {
-		return image;
-	}
+    public String getCategory() {
+        return category;
+    }
 
-	public void setImage(String image) {
-		this.image = image;
-	}
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
-	public int getDiscount() {
-		return discount;
-	}
+    public Double getPrice() {
+        return price;
+    }
 
-	public void setDiscount(int discount) {
-		this.discount = discount;
-	}
+    public void setPrice(Double price) {
+        this.price = price;
+    }
 
-	public Double getDiscountPrice() {
-		return discountPrice;
-	}
+    public int getStock() {
+        return stock;
+    }
 
-	public void setDiscountPrice(Double discountPrice) {
-		this.discountPrice = discountPrice;
-	}
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
 
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public String getImage() {
+        return image;
+    }
 
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setImage(String image) {
+        this.image = image;
+    }
 
-	public List<Review> getReviews() {
-		return reviews;
-	}
+    public int getDiscount() {
+        return discount;
+    }
 
-	public void setReviews(List<Review> reviews) {
-		this.reviews = reviews;
-	}
-	
-	
-	
+    public void setDiscount(int discount) {
+        this.discount = discount;
+    }
+
+    public Double getDiscountPrice() {
+        return discountPrice;
+    }
+
+    public void setDiscountPrice(Double discountPrice) {
+        this.discountPrice = discountPrice;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public String getCommodity() {
+        return commodity; // Getter for commodity
+    }
+
+    public void setCommodity(String commodity) {
+        this.commodity = commodity; // Setter for commodity
+    }
+
+    public String getPriceLastUpdated() {
+        return priceLastUpdated; // Getter for price last updated
+    }
+
+    public void setPriceLastUpdated(String priceLastUpdated) {
+        this.priceLastUpdated = priceLastUpdated; // Setter for price last updated
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
 }

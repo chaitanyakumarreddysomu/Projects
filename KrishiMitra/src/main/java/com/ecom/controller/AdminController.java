@@ -105,6 +105,7 @@ public class AdminController {
 	    m.addAttribute("countType1", countType1);
 	    m.addAttribute("countType2", countType2);
 	    m.addAttribute("countType3", countType3);
+	    m.addAttribute("pageTitle", "Admin Dashboard");
 
 	    // Fetch orders by order service
 	    long totalPending = orderService.countOrdersByStatus("In Progress");
@@ -164,12 +165,14 @@ public class AdminController {
 	    model.addAttribute("totalPages", page.getTotalPages());
 	    model.addAttribute("isFirst", page.isFirst());
 	    model.addAttribute("isLast", page.isLast());
+	    model.addAttribute("pageTitle", "Category");
 
 	    return "admin/category";
 	}
 	@GetMapping("/category/add")
 	public String addCategoryForm(Model model) {
 	    model.addAttribute("category", new Category());
+	    model.addAttribute("pageTitle", "AddCategory");
 	    return "admin/add_category";
 	}
 
@@ -210,6 +213,7 @@ public class AdminController {
 	@GetMapping("/loadEditCategory/{id}")
 	public String loadEditCategory(@PathVariable int id, Model m) {
 		m.addAttribute("category", categoryService.getCategoryById(id));
+		m.addAttribute("pageTitle", "EditCategory");
 		return "admin/edit_category";
 	}
 
@@ -279,7 +283,7 @@ public class AdminController {
 	    
 	    long totalProductCount = productService.getTotalProductCount();
 	  
-	 
+	    m.addAttribute("pageTitle", "Products");
 	    m.addAttribute("products", page.getContent());
 	    m.addAttribute("totalProductCount", totalProductCount);
 	    
@@ -309,6 +313,7 @@ public class AdminController {
 	public String editProduct(@PathVariable int id, Model m) {
 		m.addAttribute("product", productService.getProductById(id));
 		m.addAttribute("categories", categoryService.getAllCategory());
+		m.addAttribute("pageTitle", "EditProduct");
 		return "admin/edit_product";
 	}
 
@@ -338,10 +343,13 @@ public class AdminController {
 	    
 	    if (type == 1) {
 	        users = userService.getUsers("ROLE_USER");
+	        model.addAttribute("pageTitle", "Users");
 	    } else if (type == 2) {
 	        users = userService.getUsers("ROLE_SELLER");
+	        model.addAttribute("pageTitle", "Sellers");
 	    } else {
 	        users = userService.getUsers("ROLE_ADMIN");
+	        model.addAttribute("pageTitle", "Admins");
 	    }
 	    
 	    model.addAttribute("userType", type);
@@ -379,6 +387,7 @@ public class AdminController {
 	    model.addAttribute("isFirst", page.isFirst());
 	    model.addAttribute("isLast", page.isLast());
 
+	    model.addAttribute("pageTitle", "Orders");
 	    // Add counts for each order status
 	    model.addAttribute("totalPending", orderService.countOrdersByStatus("PENDING"));
 	    model.addAttribute("totalDelivered", orderService.countOrdersByStatus("DELIVERED"));
@@ -451,7 +460,8 @@ public class AdminController {
 	}
 
 	@GetMapping("/add-admin")
-	public String loadAdminAdd() {
+	public String loadAdminAdd(Model model) {
+		model.addAttribute("pageTitle", "Add Admin");
 		return "/admin/add_admin";
 	}
 
@@ -498,7 +508,8 @@ public class AdminController {
 	}
 	
 	@GetMapping("/add-seller")
-	public String loadSellerAdd() {
+	public String loadSellerAdd(Model m) {
+		m.addAttribute("pageTitle", "Add Seller");
 		return "/admin/add_seller";
 	}
 
@@ -545,7 +556,8 @@ public class AdminController {
 	}
 
 	@GetMapping("/profile")
-	public String profile() {
+	public String profile(Model model) {
+		model.addAttribute("pageTitle", "Profile");
 		return "/admin/profile";
 	}
 
@@ -580,6 +592,7 @@ public class AdminController {
 			session.setAttribute("errorMsg", "Current Password incorrect");
 		}
 
+		
 		return "redirect:/admin/profile";
 	}
 

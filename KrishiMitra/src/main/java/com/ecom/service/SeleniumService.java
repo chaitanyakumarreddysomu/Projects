@@ -10,7 +10,9 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,11 +21,11 @@ public class SeleniumService {
 
     public MarketData getMarketData(String CommSelect) {
     	
-    	ChromeOptions opt = new ChromeOptions();
-    	opt.addArguments("--headless=new");
+    	ChromeOptions options = new ChromeOptions();
+//    	options.addArguments("--headless=old");
     	
-        WebDriver driver = new ChromeDriver(opt);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        WebDriver driver = new ChromeDriver(options);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(60));
 
         try {
             driver.get("https://agmarknet.gov.in/SearchCmmMkt.aspx");
@@ -39,7 +41,7 @@ public class SeleniumService {
             }
 
             // Fetch commodity options
-            Select commoditySelect = new Select(driver.findElement(By.id("ddlCommodity")));
+            Select commoditySelect = new Select(driver.findElement(By.xpath("//select[@id='ddlCommodity']")));
             List<WebElement> commodities = commoditySelect.getOptions();
             List<String> commodityNames = commodities.stream()
                     .map(WebElement::getText)
@@ -49,13 +51,27 @@ public class SeleniumService {
             commoditySelect.selectByVisibleText(CommSelect);
             driver.findElement(By.id("btnGo")).click();
 
+            WebElement noData = driver.findElement(By.xpath("//td[normalize-space()='No Data Found']"));
+            
+            if(noData.isDisplayed()) {
+            	Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE, -1);  // Subtract 1 day for yesterday
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+                String yesterdayDate = sdf.format(calendar.getTime());
+                driver.findElement(By.xpath("//input[@id='txtDate']")).clear();
+                driver.findElement(By.xpath("//input[@id='txtDate']")).sendKeys(yesterdayDate);
+                driver.findElement(By.id("btnGo")).click();
+            }
             // Wait for the price data to load
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("cphBody_GridPriceData")));
 
             // Fetch price data
             List<WebElement> priceElements = driver.findElements(By.xpath("//table[@id='cphBody_GridPriceData']//tr//td[7]"));
+            
 
             return extractMarketData(priceElements, commodityNames);
+            
+            
 
         } finally {
             driver.quit(); // Ensure the driver is closed

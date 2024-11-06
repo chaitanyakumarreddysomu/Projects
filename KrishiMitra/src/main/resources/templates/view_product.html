@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
 	th:replace="~{base::layout(~{::section})}">
@@ -68,9 +70,10 @@
                                
                                 <!-- MAIN SLIDES -->
                                 <div class="product-image-slider">
-                                    <figure class="border-radius-10">
-                                        <img alt="" th:src="@{'/img/product_img/'+${product.image}} " width="300px" height="350px">
+                                    <figure class="border-radius-10" style="height: 450px;">
+                                        <img alt="" th:src="@{'/img/product_img/'+${product.image}} " style="height: 450px; object-fit: cover;">
                                     </figure>
+									
                                     
                                 </div>
                                 <!-- THUMBNAILS -->
@@ -84,6 +87,14 @@
                                 <th:block th:unless="${product.stock>0}">
                                     <span class="stock-status out-stock">out of stock</span>
                                 </th:block>
+								
+								<span class="stock-status price-updated" id="priceUpdated">
+								        <span style="font-weight:normal"> Price updated on</span> 
+								        <span style="font-weight:bold">[[${product.priceLastUpdated}]]</span> 
+								      </span>
+									  
+								
+								
                                
                                 <h2 class="title-detail">[[${product.title}]]</h2>
                                 <div class="product-detail-rating">
@@ -96,10 +107,10 @@
                                 </div>
                                 <div class="clearfix product-price-cover">
                                     <div class="product-price primary-color float-left">
-                                        <span class="current-price text-brand">[[${product.discountPrice}]]</span>
+                                        <span class="current-price text-brand">[[${product.discountPrice}]]/Kg</span>
                                         <span>
                                             <span class="save-price font-md color3 ml-15">[[${product.discount}]]% Off</span>
-                                            <span class="old-price font-md ml-15">[[${product.price}]]</span>
+                                            <span class="old-price font-md ml-15">[[${product.price}]]/Kg</span>
                                         </span>
                                     </div>
                                 </div>
@@ -132,20 +143,28 @@
                                         
                                         <th:block th:unless="${product.stock > 0}">
                                             <button class="button button-out-of-stock w-100 bg-secondary text-white" disabled>
-                                                <i class="fi-rs-shopping-cart"></i>Out of Stock
+                                                <i class="fi-rs-shopping-cart"></i>Out of Stock 
                                             </button>
                                         </th:block>	
+									
+										
                                         
                                     </div>
                                 </div>
                                 <div class="font-xs">
                                     <ul class="mr-50 float-start">
                                         <li class="mb-5">Category: <span class="text-brand"> <a th:href="@{'/products?category=' + ${product.category}}">[[${product.category}]]</a></span></li>
+										<li class="mb-5">Commodity:<span class="text-brand"> [[${product.commodity}]]</span></li>
+
                                     </ul>
                                     <ul class="float-start">
                                         <li>Stock:<span class="in-stock text-brand ml-5">[[${product.stock}]] Items In Stock</span></li>
                                     </ul>
                                 </div>
+								
+								
+								
+								
                             </div>
                             <!-- Detail Info -->
                         </div>
@@ -185,6 +204,9 @@
 
 	</section>
 	
-	
+	<script>
+		
+
+	</script>
 </body>
 </html>

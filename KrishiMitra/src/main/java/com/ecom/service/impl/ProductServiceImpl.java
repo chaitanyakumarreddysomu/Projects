@@ -75,6 +75,7 @@ public class ProductServiceImpl implements ProductService {
 		dbProduct.setImage(imageName);
 		dbProduct.setIsActive(product.getIsActive());
 		dbProduct.setDiscount(product.getDiscount());
+		dbProduct.setPriceLastUpdated(product.getPriceLastUpdated());
 
 		// 5=100*(5/100); 100-5=95
 		Double disocunt = product.getPrice() * (product.getDiscount() / 100.0);
@@ -222,3 +223,4 @@ public class ProductServiceImpl implements ProductService {
         return keywords.toString().trim();
     }
 }
+

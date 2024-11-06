@@ -6,6 +6,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<!--favicon-->
+		<link rel="icon" th:src="@{/adminAssets/images/logo-icon.png}"/>
 		
 		<!--plugins-->
 		<link th:href="@{/adminAssets/plugins/simplebar/css/simplebar.css}" rel="stylesheet" />
@@ -24,7 +25,7 @@
 
 		<link rel="stylesheet" th:href="@{/assets/css/bot.css}" />
 		
-		<title>Admin</title>
+		<title th:text="${pageTitle}">Title</title>
 		<style>
 		        /* Custom scrollbar styles */
 		        ::-webkit-scrollbar {
@@ -116,7 +117,7 @@
 									<li th:if="${user.role=='ROLE_ADMIN'}"><a class="dropdown-item d-flex align-items-center" href="/admin/add-admin"><i class="bx bx-user-plus fs-5"></i></i><span>Add Admins</span></a></li>
 						            <li th:if="${user.role=='ROLE_ADMIN'}"><a class="dropdown-item d-flex align-items-center" href="/admin/add-seller"><i class='bx bx-store fs-5'></i><span>Add Sellers</span></a></li>
 						            <li th:if="${user.role=='ROLE_ADMIN'}"><a class="dropdown-item d-flex align-items-center" href="/admin/category"><i class='bx bx-category fs-5' ></i><span>Categories</span></a></li>
-									<li th:if="${user.role=='ROLE_SELLER'}"><a class="dropdown-item d-flex align-items-center" href="/seller/loadAddProduct?commodity=Rice"><i class='bx bx-category fs-5' ></i><span>Add Products</span></a></li>
+									<li th:if="${user.role=='ROLE_SELLER'}"><a class="dropdown-item d-flex align-items-center" href="/seller/loadAddProduct"><i class='bx bx-category fs-5' ></i><span>Add Products</span></a></li>
 						            
 								</th:block> 
 						            

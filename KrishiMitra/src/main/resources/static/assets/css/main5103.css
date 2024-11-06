@@ -66,6 +66,19 @@ article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
   display: block;
 }
+.search-input {
+    transition: border 0.3s;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px; /* Adjust as needed */
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #007bff; /* Change border color on focus */
+}
 
 body {
   line-height: 1;
@@ -4307,7 +4320,10 @@ table .product-thumbnail img {
   color: #f74b81;
   background: #fde0e9;
 }
-
+.stock-status.price-updated {
+  color: #4fb554;
+  background: #E5F2E6;
+}
 .detail-info .product-price-cover {
   display: flex;
   justify-content: space-between;

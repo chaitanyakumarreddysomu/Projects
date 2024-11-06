@@ -731,6 +731,46 @@
     });
 })(jQuery);
 
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const input = document.querySelector('.search-input');
+    const placeholders = ["Rice...", "Pulses...", "Cerels..."];
+    let currentPlaceholderIndex = 0;
+    let currentText = "";
+    let isDeleting = false;
+
+    function typePlaceholder() {
+        const targetPlaceholder = placeholders[currentPlaceholderIndex];
+
+        if (isDeleting) {
+            currentText = targetPlaceholder.substring(0, currentText.length - 1);
+        } else {
+            currentText = targetPlaceholder.substring(0, currentText.length + 1);
+        }
+
+        input.placeholder = currentText;
+
+        // If the current text is the full placeholder, switch to deleting
+        if (currentText === targetPlaceholder) {
+            isDeleting = true;
+        }
+
+        // If we have deleted the entire placeholder, switch to the next one
+        if (isDeleting && currentText === "") {
+            isDeleting = false;
+            currentPlaceholderIndex = (currentPlaceholderIndex + 1) % placeholders.length; // Cycle through placeholders
+        }
+
+        // Adjust typing speed
+        const typingSpeed = isDeleting ? 50 : 100; // Speed for deleting vs typing
+        setTimeout(typePlaceholder, typingSpeed);
+    }
+
+    // Start the typing effect
+    typePlaceholder();
+});
+
 document.querySelectorAll('.input-group-text').forEach((toggle) => {
     toggle.addEventListener('click', function () {
         const input = this.previousElementSibling;
@@ -747,4 +787,6 @@ document.querySelectorAll('.input-group-text').forEach((toggle) => {
         }
     });
 });
+
+
 

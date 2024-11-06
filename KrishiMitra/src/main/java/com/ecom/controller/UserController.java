@@ -76,6 +76,7 @@ public class UserController {
 
 		List<Category> allActiveCategory = categoryService.getAllActiveCategory();
 		m.addAttribute("categorys", allActiveCategory);
+		
 	}
 
 	@GetMapping("/addCart")
@@ -99,6 +100,7 @@ public class UserController {
 
 	    // Add carts to model
 	    m.addAttribute("carts", carts);
+	    m.addAttribute("pageTitle", "Cart");
 
 	    if (carts.size() > 0) {
 	        // Calculate total order price and round to 0 decimal points
@@ -144,6 +146,7 @@ public class UserController {
 		UserDtls user = getLoggedInUserDetails(p);
 		List<Cart> carts = cartService.getCartsByUser(user.getId());
 		m.addAttribute("carts", carts);
+		m.addAttribute("pageTitle", "Orders");
 		if (carts.size() > 0) {
 			Double orderPrice = carts.get(carts.size() - 1).getTotalOrderPrice();
 			Double totalOrderPrice = carts.get(carts.size() - 1).getTotalOrderPrice() + 250 + 100;
@@ -164,7 +167,8 @@ public class UserController {
 	}
 
 	@GetMapping("/success")
-	public String loadSuccess() {
+	public String loadSuccess(Model m) {
+		m.addAttribute("pageTitle", "Success");
 	    return "/user/success";
 	}
 	
@@ -202,6 +206,7 @@ public class UserController {
 	    orders.sort(Comparator.comparing(ProductOrder::getOrderDate).reversed());
 
 	    m.addAttribute("orders", orders);
+	    m.addAttribute("pageTitle", "Profile");
 	    return "/user/profile";
 	}
 

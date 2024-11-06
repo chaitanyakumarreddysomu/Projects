@@ -1,155 +1,215 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	th:replace="~{adminBase::layout(~{::section})}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{adminBase::layout(~{::section})}">
 <head>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<title>Edit Product</title>
 </head>
 <body>
 	<section>
 		<div class="page-wrapper">
-					
-					<!-- alert start-->
-					<th:block th:if="${session.succMsg}">
-					    <div class="alert alert-success alert-dismissible fade show py-2 alert-custom" role="alert">
-					        <div class="d-flex align-items-center">
-					            <div class="font-35 text-white"><i class='bx bxs-check-circle'></i></div>
-					            <div class="ms-3">
-					                <h6 class="mb-0 text-white" th:text="${session.succMsg}"></h6>
-					            </div>
-					        </div>
-					        <button type="button" class="btn-close" aria-label="Close"></button>
-					    </div>
-					</th:block>
-					<th:block th:if="${session.errorMsg}">
-					    <div class="alert alert-danger alert-dismissible fade show py-2 alert-custom" role="alert">
-					        <div class="d-flex align-items-center">
-					            <div class="font-35 text-white"><i class='bx bxs-error-circle'></i></div>
-					            <div class="ms-3">
-					                <h6 class="mb-0 text-white" th:text="${session.errorMsg}"></h6>
-					            </div>
-					        </div>
-					        <button type="button" class="btn-close" aria-label="Close"></button>
-					    </div>
-					</th:block>
-					
-					
-					<!-- alert end-->
-				
-					
-					
-					<div class="page-content">
-						<!--breadcrumb-->
-						<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-							<div class="breadcrumb-title pe-3">SELLERS</div>
-							<div class="ps-3">
-								<nav aria-label="breadcrumb">
-									<ol class="breadcrumb mb-0 p-0">
-										<li class="breadcrumb-item"><a href="/seller/"><i class="bx bx-home-alt"></i></a>
-										</li>
-										<li class="breadcrumb-item"><a href="/seller/products">Products</a>
-																				</li>
-										<li class="breadcrumb-item active" aria-current="page">Edit Product</li>
-									</ol>
-								</nav>
-							</div>
-							<div class="ms-auto">
-								
-							</div>
-						</div>
-						<!--end breadcrumb-->
-						<div class="container">
-							<div class="main-body">
-								<div class="row">
-									<div class="col-lg-16">
-										<div class="card">
+
+			<!-- Alert Messages -->
+			<th:block th:if="${session.succMsg}">
+			    <div class="alert alert-success alert-dismissible fade show py-2 alert-custom" role="alert">
+			        <div class="d-flex align-items-center">
+			            <div class="font-35 text-white"><i class='bx bxs-check-circle'></i></div>
+			            <div class="ms-3">
+			                <h6 class="mb-0 text-white" th:text="${session.succMsg}"></h6>
+			            </div>
+			        </div>
+			        <button type="button" class="btn-close" aria-label="Close"></button>
+			    </div>
+			</th:block>
+			<th:block th:if="${session.errorMsg}">
+			    <div class="alert alert-danger alert-dismissible fade show py-2 alert-custom" role="alert">
+			        <div class="d-flex align-items-center">
+			            <div class="font-35 text-white"><i class='bx bxs-error-circle'></i></div>
+			            <div class="ms-3">
+			                <h6 class="mb-0 text-white" th:text="${session.errorMsg}"></h6>
+			            </div>
+			        </div>
+			        <button type="button" class="btn-close" aria-label="Close"></button>
+			    </div>
+			</th:block>
+
+			<div class="page-content">
+				<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+					<div class="breadcrumb-title pe-3">SELLER</div>
+					<div class="ps-3">
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb mb-0 p-0">
+								<li class="breadcrumb-item"><a href="/seller/"><i class="bx bx-home-alt"></i></a></li>
+								<li class="breadcrumb-item"><a href="/seller/products">Products</a></li>
+								<li class="breadcrumb-item active" aria-current="page">Edit Product</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+
+				<div class="container">
+					<div class="main-body">
+						<div class="row">
+							<div class="col-lg-12">
+								<div class="card">
+									<div class="card-body">
+										<form action="/seller/updateProduct" method="post" enctype="multipart/form-data">
+											<input type="hidden" name="id" th:value="${product.id}">
 											
-											<div class="card-body">
-											<form action="/seller/updateProduct" method="post"
-						enctype="multipart/form-data">
-						<input type="hidden" name="id" th:value="${product.id}">
-						<div class="mb-3">
-							<label>Enter Title</label> <input type="text" name="title"
-								th:value="${product.title}" class="form-control">
-						</div>
-
-						<div class="mb-3">
-							<label>Enter Description</label>
-							<textarea rows="3" cols="" class="form-control"
-								name="description">[[${product.description}]]</textarea>
-						</div>
-						<div class="row">
-							<div class="mb-3 col">
-								<label>Category</label> <select class="form-control"
-									name="category">
-									<option>[[${product.category}]]</option>
-									<option th:each="c:${categories}">[[${c.name}]]</option>
-								</select>
-							</div>
-							<div class="mb-3 col">
-								<label>Enter Price</label> <input type="number" name="price" readonly
-									th:value="${product.price}" class="form-control">
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="mb-3 col">
-								<label>Discount</label> <input type="number" name="discount"
-									th:value="${product.discount}" class="form-control">
-							</div>
-							<div class="mb-3 col">
-								<label>Discount Price</label> <input type="number" readonly
-									th:value="${product.discountPrice}" class="form-control">
-							</div>
-						</div>
-
-						<div class="mb-3">
-							<label>Status</label>
-
-							<div class="form-check">
-								<input class="form-check-input" type="radio" th:checked="${product.isActive==true}"
-									value="true" name="isActive" id="flexRadioDefault1">
-								<label class="form-check-label" for="flexRadioDefault1">
-									Active </label>
-							</div>
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="isActive" th:checked="${product.isActive==false}"
-									value="false" id="flexRadioDefault2"> <label
-									class="form-check-label" for="flexRadioDefault2">
-									Inactive </label>
-							</div>
-
-						</div>
-
-						<div class="row">
-
-							<div class="mb-3 col">
-								<label>Enter Stock</label> <input type="text" name="stock"
-									th:value="${product.stock}" class="form-control">
-							</div>
-
-							<div class="mb-3 col">
-								<label>Upload Image</label> <input type="file" name="file"
-									class="form-control">
-							</div>
-
-							<div class="mt-1">
-								<img th:src="@{'/img/product_img/'+${product.image}}"
-									width="100px" height="100px">
-							</div>
-
-						</div>
-						<button type="submit" class="btn btn-light px-5 mt-4 " name="submit"><i class='bx bx-cloud-upload mr-1'></i>Update</button>
-					</form>
+											<div class="mb-3">
+												<label>Enter Title</label>
+												<input type="text" name="title" th:value="${product.title}" class="form-control">
 											</div>
-										</div>
-										
+
+											<div class="mb-3">
+												<label>Enter Description</label>
+												<textarea rows="3" cols="" class="form-control" name="description">[[${product.description}]]</textarea>
+											</div>
+											
+
+											<div class="mb-3 row">
+												<div class="col">
+													<label>Commodity:</label>
+													<input type="text" name="commodity" th:value="${product.commodity}" class="form-control" readonly>
+												</div>
+
+												
+												<div class="col">
+													<label>Category</label>
+													<select class="form-control" name="category">
+														<option th:each="c : ${categories}" th:value="${c.name}" th:text="${c.name}"></option>
+													</select>
+												</div>
+											</div>
+
+											<div class="mb-3 row">
+												<div class="col">
+													<label>Price /Kg</label>
+													<input type="text" name="price" id="averageModalPriceInput" class="form-control" th:value="${product.price}" readonly required>
+												</div>
+
+												
+												<div class=" col">
+															<label>Discount (in %)</label> <input type="number" name="discount" min="0" max="100"
+																th:value="${product.discount}" class="form-control">
+														</div>
+											</div>
+											<div class="mb-3 row">
+												
+												<div class="col">
+													<label>Discount Price</label> <input type="number" readonly
+														th:value="${product.discountPrice}" class="form-control">
+												</div>
+												<div class="col">
+													<label>Price Last Updated</label>
+													
+													<input type="text" name="priceLastUpdated" id="arrivalDateInput" class="form-control" th:value="${product.priceLastUpdated}" required readonly>
+												</div>
+											</div>
+
+
+											<div class="mb-3">
+												<label>Status</label>
+												<div class="form-check">
+													<input class="form-check-input" type="radio" th:checked="${product.isActive == true}" value="true" name="isActive" id="flexRadioDefault1">
+													<label class="form-check-label" for="flexRadioDefault1">Active</label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input" type="radio" name="isActive" th:checked="${product.isActive == false}" value="false" id="flexRadioDefault2">
+													<label class="form-check-label" for="flexRadioDefault2">Inactive</label>
+												</div>
+											</div>
+
+											<div class="mb-3 row">
+												<div class="col">
+													<label>Enter Stock</label>
+													<input type="text" name="stock" th:value="${product.stock}" class="form-control" required>
+												</div>
+
+												<div class="col">
+													<label>Upload Image</label>
+													<input type="file" name="file" class="form-control">
+												</div>
+											</div>
+
+											<div class="mt-1">
+												<img th:src="@{'/img/product_img/'+${product.image}}" width="100px" height="100px">
+											</div>
+
+											<!-- Button to update the price -->
+											<button type="button" class="btn btn-light px-5 mt-4" id="updatePriceButton">
+												<i class='bx bx-refresh mr-1'></i> <span id="buttonText">Update Price</span>
+											</button>
+											
+
+											<!-- Submit Button -->
+											<button type="submit" class="btn btn-light px-5 mt-4" name="submit">
+												<i class='bx bx-cloud-upload mr-1'></i> Update Product
+											</button>
+										</form>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+			</div>
+		</div>
+
+		<script>
+			const apiUrl = 'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd000001cdc3b564546246a772a26393094f5645&offset=0&limit=all&format=json';
+
+			// Show loading message and change button text
+			function showLoading() {
+				document.getElementById('buttonText').textContent = 'Fetching...';
+			}
+
+			// Revert to the original text
+			function hideLoading() {
+				document.getElementById('buttonText').textContent = 'Update Price';
+			}
+
+			document.getElementById('updatePriceButton').addEventListener('click', function() {
+				const commodity = document.querySelector('input[name="commodity"]').value;
+				showLoading();  // Change button text to "Fetching..."
+				fetchPriceAndUpdate(commodity);
+			});
+
+			function fetchPriceAndUpdate(commodity) {
+				fetch(apiUrl)
+					.then(response => response.json())
+					.then(data => {
+						const records = data.records;
+						const commodityRecords = records.filter(record => record.commodity === commodity);
+
+						if (commodityRecords.length > 0) {
+							const modalPrices = commodityRecords.map(record => parseFloat(record.modal_price)).filter(price => !isNaN(price));
+
+							if (modalPrices.length > 0) {
+								const averagePrice = modalPrices.reduce((sum, price) => sum + price, 0) / modalPrices.length;
+								const averagePricePerKg = (averagePrice / 100).toFixed(2); // Assuming conversion by 10 as mentioned before.
+								document.getElementById('averageModalPriceInput').value = `${averagePricePerKg}`;
+
+								// Find the latest arrival date for this commodity (no validation)
+								const latestArrivalDate = commodityRecords[0].arrival_date; 
+
+								// Display the arrival date as-is in the input field
+								document.getElementById('arrivalDateInput').value = latestArrivalDate || 'No date available';  // Default if no date found 
+							} else {
+								alert('No prices found for the selected commodity.');
+							}
+						} else {
+							alert('No records found for this commodity.');
+						}
+					})
+					.catch(error => {
+						console.error('Error fetching data:', error);
+					})
+					.finally(() => {
+						hideLoading();  // Revert button text to "Update Price" when done
+					});
+			}
+		</script>
+
 	</section>
 </body>
 </html>

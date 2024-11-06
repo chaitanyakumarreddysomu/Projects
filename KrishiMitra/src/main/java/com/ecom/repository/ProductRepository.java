@@ -41,3 +41,4 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 	Page<Product> findByTitleContainingIgnoreCaseOrderByDiscountDesc(String title, Pageable pageable);
 	
 }
+

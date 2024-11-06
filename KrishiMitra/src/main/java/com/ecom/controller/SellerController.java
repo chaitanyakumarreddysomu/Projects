@@ -92,7 +92,7 @@ public class SellerController {
 
         // Fetch orders for the seller's products
         Page<ProductOrder> page = orderService.getOrdersBySellerIdPagination1(loggedInUser.getId(), pageNo, pageSize);
-        
+        model.addAttribute("pageTitle", "Seller Dashboard");
         model.addAttribute("orders", page.getContent());
         model.addAttribute("pageNo", page.getNumber());
         model.addAttribute("pageSize", pageSize);
@@ -105,17 +105,13 @@ public class SellerController {
         return "seller/index";
     }
 
-    @Autowired
-    private SeleniumService seleniumService;
-    
-    public SellerController(SeleniumService seleniumService) {
-        this.seleniumService = seleniumService;
-    }
+
+
+
     
     @GetMapping("/loadAddProduct")
     public String loadAddProduct(Model model, 
-                                  @AuthenticationPrincipal UserDetails userDetails, 
-                                  @RequestParam(value = "commodity", required = false) String commSelect) {
+                                  @AuthenticationPrincipal UserDetails userDetails) {
         
         // Retrieve the logged-in user's email and details
         String email = userDetails.getUsername();
@@ -125,48 +121,54 @@ public class SellerController {
         List<Category> categories = categoryService.getAllCategory();
         model.addAttribute("categories", categories);
         model.addAttribute("sellerName", loggedInUser.getName());
-
-        // If a commodity is selected, fetch market data for it
-        if (commSelect != null && !commSelect.isEmpty()) {
-            // Get market data for the selected commodity
-            SeleniumService.MarketData marketData = seleniumService.getMarketData(commSelect);
-            
-            model.addAttribute("max", marketData.getMax());
-            model.addAttribute("min", marketData.getMin());
-            model.addAttribute("avg", marketData.getAvg());
-            model.addAttribute("commodities", marketData.getCommodities());
-            model.addAttribute("selectedCommodity", commSelect); // To retain the selected commodity
-        }
+        
+        // Set the page title
+        model.addAttribute("pageTitle", "Add Product");
 
         return "seller/add_product"; // Return the view for adding a product
     }
 
+    
+
     @PostMapping("/saveProduct")
-    public String saveProduct(@ModelAttribute Product product, @RequestParam("file") MultipartFile image,
+    public String saveProduct(@ModelAttribute Product product,
+                              @RequestParam("file") MultipartFile image,
                               HttpSession session, Principal p) throws IOException {
 
+        // Handle image name, defaulting to "default.jpg" if no image is uploaded
         String imageName = image.isEmpty() ? "default.jpg" : image.getOriginalFilename();
         product.setImage(imageName);
         product.setDiscount(0);
         product.setDiscountPrice(product.getPrice());
 
+        // Get the logged-in user's email to set the seller ID
         String email = p.getName();
         UserDtls loggedInUser = userService.getUserByEmail(email);
         product.setSellerId(loggedInUser.getId()); // Set seller ID
 
-        Product saveProduct = productService.saveProduct(product);
+        // Ensure to set the commodity and priceLastUpdated
+        product.setCommodity(product.getCommodity()); // Set commodity field
+        product.setPriceLastUpdated(product.getPriceLastUpdated()); // Set price last updated
 
-        if (!ObjectUtils.isEmpty(saveProduct)) {
+        // Save the product to the database
+        Product savedProduct = productService.saveProduct(product);
+
+        if (!ObjectUtils.isEmpty(savedProduct)) {
+            // Define the file path to save the uploaded image
             File saveFile = new ClassPathResource("static/img").getFile();
-            Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product_img" + File.separator
-                    + image.getOriginalFilename());
+            Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product_img" + File.separator + imageName);
+            
+            // Copy the image file to the specified location
             Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            
+            // Set a success message in the session
             session.setAttribute("succMsg", "Product Saved Successfully");
         } else {
+            // Set an error message in case of failure
             session.setAttribute("errorMsg", "Something went wrong on the server");
         }
 
-        return "redirect:/seller/products";
+        return "redirect:/seller/products"; // Redirect to the products list page
     }
 
 
@@ -201,6 +203,7 @@ public class SellerController {
         model.addAttribute("isFirst", page.isFirst());
         model.addAttribute("isLast", page.isLast());
         model.addAttribute("totalProducts", totalProducts);
+        model.addAttribute("pageTitle", "Products");
 
         return "seller/products";
     }
@@ -223,6 +226,7 @@ public class SellerController {
 	public String editProduct(@PathVariable int id, Model m) {
 		m.addAttribute("product", productService.getProductById(id));
 		m.addAttribute("categories", categoryService.getAllCategory());
+		m.addAttribute("pageTitle", "Edit Product");
 		return "seller/edit_product";
 	}
 
@@ -254,7 +258,7 @@ public class SellerController {
 
         // Fetch orders for the seller's products
         Page<ProductOrder> page = orderService.getOrdersBySellerIdPagination1(loggedInUser.getId(), pageNo, pageSize);
-        
+        model.addAttribute("pageTitle", "Orders");
         model.addAttribute("orders", page.getContent());
         model.addAttribute("pageNo", page.getNumber());
         model.addAttribute("pageSize", pageSize);
@@ -345,7 +349,8 @@ public class SellerController {
     }
 
     @GetMapping("/profile")
-    public String profile() {
+    public String profile(Model model) {
+    	model.addAttribute("pageTitle", "Profile");
         return "seller/profile";
     }
 

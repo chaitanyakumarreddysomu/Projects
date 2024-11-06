@@ -28,6 +28,7 @@ import com.ecom.model.Category;
 import com.ecom.model.Product;
 import com.ecom.model.Review;
 import com.ecom.model.UserDtls;
+
 import com.ecom.service.CartService;
 import com.ecom.service.CategoryService;
 import com.ecom.service.OrderService;
@@ -97,9 +98,11 @@ public class HomeController {
                 .toList();
 
         // Add attributes for view
+        m.addAttribute("pageTitle", "KrishiMitra");
         m.addAttribute("products", topProducts);
         m.addAttribute("categories", categories);
 
+        m.addAttribute("activePage", "home");
         // Pass the selected category if it's present
         if (category != null && !category.isEmpty()) {
             m.addAttribute("selectedCategory", category);
@@ -108,6 +111,32 @@ public class HomeController {
 
         return "index";
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     @GetMapping("/contact")
     public String contact(Model m, @RequestParam(value = "category", defaultValue = "") String category) {
@@ -124,6 +153,8 @@ public class HomeController {
         // Add attributes for view
         m.addAttribute("products", topProducts);
         m.addAttribute("categories", categories);
+        m.addAttribute("pageTitle", "Contact");
+        m.addAttribute("activePage", "contact");
 
         // Pass the selected category if it's present
         if (category != null && !category.isEmpty()) {
@@ -146,6 +177,7 @@ public class HomeController {
                 .toList();
 
         // Add attributes for view
+        m.addAttribute("pageTitle", "Signin");
         m.addAttribute("products", topProducts);
         m.addAttribute("categories", categories);
 
@@ -171,6 +203,7 @@ public class HomeController {
                 .toList();
 
         // Add attributes for view
+        m.addAttribute("pageTitle", "Register");
         m.addAttribute("products", topProducts);
         m.addAttribute("categories", categories);
 
@@ -193,6 +226,8 @@ public class HomeController {
         List<Category> categories = categoryService.getAllActiveCategory();
         m.addAttribute("paramValue", category);
         m.addAttribute("categories", categories);
+        model.addAttribute("activePage", "shop");
+
         model.addAttribute("searchTerm", ch);
 
         Page<Product> page = null;
@@ -203,6 +238,7 @@ public class HomeController {
         }
 
         List<Product> products = page.getContent();
+        m.addAttribute("pageTitle", "Products");
         m.addAttribute("products", products);
         m.addAttribute("productsSize", products.size());
 
@@ -237,6 +273,7 @@ public class HomeController {
 
         m.addAttribute("products", topProducts);
         m.addAttribute("categories", categories);
+        m.addAttribute("pageTitle", productById.getTitle());
 
         // Pass the selected category if it's present
         if (category != null && !category.isEmpty()) {
@@ -314,7 +351,8 @@ public class HomeController {
 
     // Forgot Password Code 
     @GetMapping("/forgot-password")
-    public String showForgotPassword() {
+    public String showForgotPassword(Model m) {
+    	m.addAttribute("pageTitle", "Forgot Password");
         return "forgot_password.html";
     }
 
@@ -355,6 +393,7 @@ public class HomeController {
             return "message";
         }
         m.addAttribute("token", token);
+        m.addAttribute("pageTitle", "Reset Password");
         return "reset_password";
     }
 
