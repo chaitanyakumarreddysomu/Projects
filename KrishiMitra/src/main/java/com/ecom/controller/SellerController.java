@@ -132,7 +132,7 @@ public class SellerController {
 
     @PostMapping("/saveProduct")
     public String saveProduct(@ModelAttribute Product product,
-                              @RequestParam("file") MultipartFile image,
+                              @RequestParam("file") MultipartFile image,@RequestParam("quality") String quality,
                               HttpSession session, Principal p) throws IOException {
 
         // Handle image name, defaulting to "default.jpg" if no image is uploaded
@@ -150,6 +150,8 @@ public class SellerController {
         product.setCommodity(product.getCommodity()); // Set commodity field
         product.setPriceLastUpdated(product.getPriceLastUpdated()); // Set price last updated
 
+        product.setQuality(quality);
+        
         // Save the product to the database
         Product savedProduct = productService.saveProduct(product);
 

@@ -88,12 +88,36 @@
                                     <span class="stock-status out-stock">out of stock</span>
                                 </th:block>
 								
-								<span class="stock-status price-updated" id="priceUpdated">
+								<span class="stock-status price-updated quality" id="priceUpdated">
 								        <span style="font-weight:normal"> Price updated on</span> 
 								        <span style="font-weight:bold">[[${product.priceLastUpdated}]]</span> 
 								      </span>
 									  
-								
+									  
+									  <!-- For Good Quality -->
+									  <th:block th:if="${product.quality == 'good'}">
+									      <span class="stock-status price-updated" style="background-color: rgba(0, 255, 0, 0.1);" id="priceUpdated">
+									          <span style="font-weight:normal;" class="text-success">Quality</span> 
+									          <span style="font-weight:bold" class="text-success">[[${product.quality}]]</span>
+									      </span>
+									  </th:block>
+
+									  <!-- For Average Quality -->
+									  <th:block th:if="${product.quality == 'avg'}">
+									      <span class="stock-status price-updated" style="background-color: rgba(255, 121, 0, 0.1);" id="priceUpdated">
+									          <span style="font-weight:normal;" class="text-warning">Quality</span> 
+									          <span style="font-weight:bold" class="text-warning">[[${product.quality}]]</span>
+									      </span>
+									  </th:block>
+
+									  <!-- For Bad Quality -->
+									  <th:block th:if="${product.quality == 'bad'}">
+									      <span class="stock-status price-updated" style="background-color: rgba(255, 0, 0, 0.1);" id="priceUpdated">
+									          <span style="font-weight:normal;" class="text-danger">Quality</span> 
+									          <span style="font-weight:bold" class="text-danger">[[${product.quality}]]</span>
+									      </span>
+									  </th:block>
+
 								
                                
                                 <h2 class="title-detail">[[${product.title}]]</h2>

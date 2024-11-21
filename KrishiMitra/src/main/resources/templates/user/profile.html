@@ -166,6 +166,7 @@
 		                                                
 		                                                <form action="/user/update-profile" method="post" enctype="multipart/form-data">
 		                                                    <div class="row">
+																<input type="hidden" name="id" th:value="${user.id}"/>
 		                                                        <div class="form-group col-md-6">
 		                                                            <label>Display Name <span class="required">*</span></label>
 		                                                            <input type="text" name="name" class="form-control" th:value="${user.name}" />

@@ -122,8 +122,8 @@
 	                       <div class="search-style-2">
 	                           <form action="/products" method="get" id="search-form">
 	                               <select class="select-active">
-	                                   <option><a href="/products" th:classappend="${paramValue==''} ? 'active':''"  aria-current="true">All Categories</a></option>
-	                                  	<option th:each="c : ${categories}"><a th:href="@{'/products?category=' + ${c.name}}"  th:classappend="${paramValue == c.name} ? 'active':''"> [[${c.name}]] </a></option>
+	                                   <option><a href="/products" th:classappend="${paramValue==''} ? 'active':''"  aria-current="true">All Commodities</a></option>
+	                                  <option th:each="c : ${categories}"><a th:href="@{'/products?category=' + ${c.name}}"  th:classappend="${paramValue == c.name} ? 'active':''"> [[${c.name}]] </a></option>
 									   		   
 	                               </select>
 	                               <input type="text" class="search-input" id="search-input" placeholder="Search for items..."  name="ch"/>

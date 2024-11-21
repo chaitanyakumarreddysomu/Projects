@@ -1,5 +1,7 @@
 package com.ecom.controller;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.Principal;
 import java.util.Comparator;
 import java.util.List;
@@ -140,21 +142,39 @@ public class UserController {
 		UserDtls userDtls = userService.getUserByEmail(email);
 		return userDtls;
 	}
-
 	@GetMapping("/orders")
 	public String orderPage(Principal p, Model m) {
-		UserDtls user = getLoggedInUserDetails(p);
-		List<Cart> carts = cartService.getCartsByUser(user.getId());
-		m.addAttribute("carts", carts);
-		m.addAttribute("pageTitle", "Orders");
-		if (carts.size() > 0) {
-			Double orderPrice = carts.get(carts.size() - 1).getTotalOrderPrice();
-			Double totalOrderPrice = carts.get(carts.size() - 1).getTotalOrderPrice() + 250 + 100;
-			m.addAttribute("orderPrice", orderPrice);
-			m.addAttribute("totalOrderPrice", totalOrderPrice);
-		}
-		return "/user/order";
+	    UserDtls user = getLoggedInUserDetails(p);
+	    List<Cart> carts = cartService.getCartsByUser(user.getId());
+	    m.addAttribute("carts", carts);
+	    m.addAttribute("pageTitle", "Orders");
+
+	    if (carts.size() > 0) {
+	        // Get the total order price
+	        Double orderPrice = carts.get(carts.size() - 1).getTotalOrderPrice();
+	        
+	        // Calculate shipping: Free if the order price is > 300, otherwise 20
+	        Double shippingCost = orderPrice > 300 ? 0.0 : 20.0;
+
+	        // Calculate tax: 5% of the order price, rounded to 1 decimal place
+	        BigDecimal taxAmount = new BigDecimal(orderPrice * 0.05).setScale(1, RoundingMode.HALF_UP);
+
+	        // Calculate total order price including shipping and tax
+	        Double totalOrderPrice = orderPrice + shippingCost + taxAmount.doubleValue();
+
+	        // Round total price to the nearest whole number (no decimals)
+	        BigDecimal totalOrderPriceRounded = new BigDecimal(totalOrderPrice).setScale(0, RoundingMode.HALF_UP);
+
+	        // Add the calculated values to the model
+	        m.addAttribute("orderPrice", orderPrice);
+	        m.addAttribute("shippingCost", shippingCost);
+	        m.addAttribute("taxAmount", taxAmount);
+	        m.addAttribute("totalOrderPrice", totalOrderPriceRounded.intValue());  // Add total order price as an integer
+	    }
+
+	    return "/user/order";
 	}
+
 
 	@PostMapping("/save-order")
 	public String saveOrder(@ModelAttribute OrderRequest request, Principal p) throws Exception {
@@ -211,15 +231,33 @@ public class UserController {
 	}
 
 
+//	@PostMapping("/update-profile")
+//	public String updateProfile(@ModelAttribute UserDtls user, @RequestParam MultipartFile img, HttpSession session) {
+//		UserDtls updateUserProfile = userService.updateUserProfile(user, img);
+//		if (ObjectUtils.isEmpty(updateUserProfile)) {
+//			session.setAttribute("errorMsg", "Profile not updated");
+//		} else {
+//			session.setAttribute("succMsg", "Profile Updated");
+//		}
+//		return "redirect:/user/profile";
+//	}
 	@PostMapping("/update-profile")
 	public String updateProfile(@ModelAttribute UserDtls user, @RequestParam MultipartFile img, HttpSession session) {
-		UserDtls updateUserProfile = userService.updateUserProfile(user, img);
-		if (ObjectUtils.isEmpty(updateUserProfile)) {
-			session.setAttribute("errorMsg", "Profile not updated");
-		} else {
-			session.setAttribute("succMsg", "Profile Updated");
-		}
-		return "redirect:/user/profile";
+	    // Debugging: Check if the ID is not null
+	    if (user.getId() == null) {
+	        System.out.println("User ID is null. Cannot update profile.");
+	        session.setAttribute("errorMsg", "User ID is missing. Cannot update profile.");
+	        return "redirect:/user/profile"; // Or handle appropriately
+	    }
+
+	    System.out.println("Updating user with ID: " + user.getId());
+	    UserDtls updateUserProfile = userService.updateUserProfile(user, img);
+	    if (updateUserProfile == null) {
+	        session.setAttribute("errorMsg", "Profile not updated");
+	    } else {
+	        session.setAttribute("succMsg", "Profile Updated");
+	    }
+	    return "redirect:/user/profile";
 	}
 
 	@PostMapping("/change-password")

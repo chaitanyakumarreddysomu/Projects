@@ -54,10 +54,20 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Review> reviews;
+    
+    private String quality; 
 
     // Getters and setters for other fields
 
-    public Integer getSellerId() {
+    public String getQuality() {
+		return quality;
+	}
+
+	public void setQuality(String quality) {
+		this.quality = quality;
+	}
+
+	public Integer getSellerId() {
         return sellerId;
     }
 

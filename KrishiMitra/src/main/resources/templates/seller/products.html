@@ -10,7 +10,7 @@
 		
 		<div class="page-wrapper">
 			<th:block th:if="${session.succMsg}">
-					    <div class="alert alert-success alert-dismissible fade show py-2 alert-custom" role="alert">
+					    <div class="alert alert-success alert-dismissible fade show py-2 alert-custom" data-bs-dismiss="alert" role="alert">
 					        <div class="d-flex align-items-center">
 					            <div class="font-35 text-white"><i class='bx bxs-check-circle'></i></div>
 					            <div class="ms-3">
@@ -21,7 +21,7 @@
 					    </div>
 					</th:block>
 					<th:block th:if="${session.errorMsg}">
-					    <div class="alert alert-danger alert-dismissible fade show py-2 alert-custom" role="alert">
+					    <div class="alert alert-danger alert-dismissible fade show py-2 alert-custom" data-bs-dismiss="alert" role="alert">
 					        <div class="d-flex align-items-center">
 					            <div class="font-35 text-white"><i class='bx bxs-error-circle'></i></div>
 					            <div class="ms-3">
@@ -39,7 +39,7 @@
 								<ol class="breadcrumb mb-0 p-0">
 									<li class="breadcrumb-item"><a href="/seller/"><i class="bx bx-home-alt"></i></a>
 									</li>
-									<li class="breadcrumb-item active" aria-current="page">Products [[${totalProducts}]]</li>
+									<li class="breadcrumb-item active" aria-current="page">Products || count : [[${totalProducts}]]</li>
 								</ol>
 							</nav>
 						</div>
@@ -59,18 +59,20 @@
 									<div class="col-lg-9 col-xl-10">
 										<form class="float-lg-end" action="/seller/products" method="get">
 											<div class="row row-cols-lg-auto g-2">
+												
 												<div class="col-12">
 													<div class="position-relative">
 														<input type="text" class="form-control ps-5" placeholder="Search Product..." name="ch"> <span class="position-absolute top-50 product-show translate-middle-y"><i class="bx bx-search"></i></span>
 													</div>
 												</div>
-												<div class="col-12">
+												<!--<div class="col-12">
 													
 														<button type="button" class="btn btn-light" id="updatePriceButton">
 																<i class='bx bx-refresh mr-1'></i> <span id="buttonText">Update Price</span>
 															</button>
 												
-												</div>
+												</div>-->
+												
 											</div>
 										</form>
 									</div>
@@ -94,12 +96,15 @@
 							</div>
 							<div class="card-body">
 								<h6 class="card-title cursor-pointer">[[${p.title}]] </h6>
+								<p hidden>[[${p.commodity}]]</p>
 								
+								<p  hidden>[[${p.priceLastUpdated}]]</p>
 								<div class="clearfix">
 									
 									
 									<a th:href="@{'/seller/editProduct/'+${p.id}}" class="btn btn-sm btn-light"><i class='bx bx-edit'></i></a>
 									<a th:href="@{'/seller/deleteProduct/'+${p.id}}" class="btn btn-sm btn-light"><i class='bx bx-trash'></i></a>
+									
 									
 									
 									

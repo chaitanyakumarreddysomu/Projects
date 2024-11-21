@@ -22,51 +22,48 @@
 							<p class="text-center fs-4">Billing Address</p>
 							<hr>
 							<div class="col p-1">
-								<label>First Name</label>
-								<input type="text" name="firstName" id="firstName" required class="form-control mt-1">
+								<label>Name</label>
+								<input type="text" name="firstName" id="firstName" required class="form-control mt-1" th:value="${user.name}">
 								<span id="firstNameError" class="error"></span>
 							</div>
 							<div class="col p-1">
-								<label>Last Name</label>
-								<input type="text" name="lastName" id="lastName" required class="form-control mt-1">
-								<span id="lastNameError" class="error"></span>
-							</div>
+									<label>Mobile Number</label>
+									<input type="text" name="mobileNo" id="mobileNo" required class="form-control col ms-2" th:value="${user.mobileNumber}">
+									<span id="mobileNoError" class="error"></span>
+								</div>
+							
 						</div>
 
 						<div class="mb-3 row">
-							<div class="col p-1">
+							<!--<div class="col p-1">
 								<label>Email</label>
-								<input type="email" name="email" id="email" required class="form-control col">
+								<input type="email" name="email" id="email" readonly required class="form-control col" th:value="${user.email}">
 								<span id="emailError" class="error"></span>
-							</div>
-							<div class="col p-1">
-								<label>Mobile Number</label>
-								<input type="text" name="mobileNo" id="mobileNo" required class="form-control col ms-2">
-								<span id="mobileNoError" class="error"></span>
-							</div>
+							</div>-->
+							
 						</div>
 
 						<div class="mb-3 row">
 							<div class="col p-1">
 								<label>Address</label>
-								<input type="text" name="address" id="address" required class="form-control col">
+								<input type="text" name="address" id="address" required class="form-control col" th:value="${user.address}">
 								<span id="addressError" class="error"></span>
 							</div>
 							<div class="col p-1">
 								<label>City</label>
-								<input type="text" name="city" id="city" required class="form-control col ms-2">
+								<input type="text" name="city" id="city" required class="form-control col ms-2" th:value="${user.city}">
 								<span id="cityError" class="error"></span>
 							</div>
 						</div>
 						<div class="mb-3 row">
 							<div class="col p-1">
 								<label>State</label>
-								<input type="text" name="state" id="state" required class="form-control col">
+								<input type="text" name="state" id="state" required class="form-control col" th:value="${user.state}">
 								<span id="stateError" class="error"></span>
 							</div>
 							<div class="col p-1">
 								<label>Pincode</label>
-								<input type="number" name="pincode" id="pincode" required class="form-control col ms-2">
+								<input type="number" name="pincode" id="pincode" required class="form-control col ms-2" th:value="${user.pincode}">
 								<span id="pincodeError" class="error"></span>
 							</div>
 						</div>
@@ -76,62 +73,63 @@
 						<div class="border p-md-4 cart-totals ml-30">
 							<div class="table-responsive">
 								<table class="table no-border">
-									<tbody>
-										<tr>
-											<td class="cart_total_label">
-												<h6 class="text-muted">Subtotal</h6>
-											</td>
-											<td class="cart_total_amount">
-												<h4 class="text-brand text-end">[[${orderPrice}]]</h4>
-											</td>
-										</tr>
-										<tr>
-											<td scope="col" colspan="2">
-												<div class="divider-2 mt-10 mb-10"></div>
-											</td>
-										</tr>
-										<tr>
-											<td class="cart_total_label">
-												<h6 class="text-muted">Shipping</h6>
-											</td>
-											<td class="cart_total_amount">
-												<h5 class="text-heading text-end">250</h5>
-											</td>
-										</tr>
-										<tr>
-											<td class="cart_total_label">
-												<h6 class="text-muted">Tax</h6>
-											</td>
-											<td class="cart_total_amount">
-												<h5 class="text-heading text-end">100</h5>
-											</td>
-										</tr>
-										<tr>
-											<td scope="col" colspan="2">
-												<div class="divider-2 mt-10 mb-10"></div>
-											</td>
-										</tr>
-										<tr>
-											<td class="cart_total_label">
-												<h6 class="text-muted">Total</h6>
-											</td>
-											<td class="cart_total_amount">
-												<h4 class="text-brand text-end">[[${totalOrderPrice}]]</h4>
-											</td>
-										</tr>
-										<tr>
-											<td colspan="2">
-												<label class="form-label">Select Payment Type</label>
-												<select required name="paymentType" id="paymentType" class="form-control">
-													<option value="">--select--</option>
-													<option value="COD">Cash On Delivery</option>
-													<option value="ONLINE">Online Payment</option>
-												</select>
-												<span id="paymentTypeError" class="error"></span>
-											</td>
-										</tr>
-									</tbody>
-								</table>
+    <tbody>
+        <tr>
+            <td class="cart_total_label">
+                <h6 class="text-muted">Subtotal</h6>
+            </td>
+            <td class="cart_total_amount">
+                <h4 class="text-brand text-end">[[${orderPrice}]]</h4>
+            </td>
+        </tr>
+        <tr>
+            <td scope="col" colspan="2">
+                <div class="divider-2 mt-10 mb-10"></div>
+            </td>
+        </tr>
+        <tr>
+            <td class="cart_total_label">
+                <h6 class="text-muted">Shipping</h6>
+            </td>
+            <td class="cart_total_amount">
+                <h5 class="text-heading text-end">[[${shippingCost}]]</h5>
+            </td>
+        </tr>
+        <tr>
+            <td class="cart_total_label">
+                <h6 class="text-muted">Tax</h6>
+            </td>
+            <td class="cart_total_amount">
+                <h5 class="text-heading text-end">[[${taxAmount}]]</h5>
+            </td>
+        </tr>
+        <tr>
+            <td scope="col" colspan="2">
+                <div class="divider-2 mt-10 mb-10"></div>
+            </td>
+        </tr>
+        <tr>
+            <td class="cart_total_label">
+                <h6 class="text-muted">Total</h6>
+            </td>
+            <td class="cart_total_amount">
+                <h4 class="text-brand text-end">[[${totalOrderPrice}]]</h4>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <label class="form-label">Select Payment Type</label>
+                <select required name="paymentType" id="paymentType" class="form-control">
+                    <option value="">--select--</option>
+                    <option value="COD">Cash On Delivery</option>
+                    <option value="ONLINE">Online Payment</option>
+                </select>
+                <span id="paymentTypeError" class="error"></span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
 							</div>
 							<button type="submit" class="button button-add-to-cart w-100">Proceed To CheckOut<i class="fi-rs-sign-out ml-15"></i></button>
 						</div>
