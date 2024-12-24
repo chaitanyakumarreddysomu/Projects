@@ -7,12 +7,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,7 +27,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ecom.model.Category;
@@ -34,8 +42,12 @@ import com.ecom.service.CategoryService;
 import com.ecom.service.OrderService;
 import com.ecom.service.ProductService;
 import com.ecom.service.ReviewService;
+import com.ecom.service.SendEmailService2;
 import com.ecom.service.UserService;
+import com.ecom.service.sendEmailService;
+import com.ecom.service.sendPasswordEmailService;
 import com.ecom.util.CommonUtil;
+import com.ecom.util.OTPUtil;
 
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,6 +72,9 @@ public class HomeController {
     private UserService userService;
 
     @Autowired
+    private JavaMailSender emailSender;
+    
+    @Autowired
     private CommonUtil commonUtil;
 
     @Autowired
@@ -67,6 +82,23 @@ public class HomeController {
 
     @Autowired
     private CartService cartService;
+    
+    @Value("${spring.mail.username}")
+    private String fromEmailId;
+    
+    @Autowired
+    private sendEmailService sendEmailService;
+    
+    @Autowired
+    private sendPasswordEmailService sendPasswordEmailService;
+    
+    
+    
+    @Autowired
+    private SendEmailService2 sendEmailService2;
+
+    
+    private String generatedOtp; 
 
     private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
@@ -113,7 +145,7 @@ public class HomeController {
     }
     
     
-    
+  
     
     
     
@@ -295,124 +327,131 @@ public class HomeController {
         return "redirect:/product/" + id;
     }
 
+
     @PostMapping("/saveUser")
     public String saveUser(@ModelAttribute UserDtls user, @RequestParam("img") MultipartFile file,
-                           RedirectAttributes redirectAttributes) throws IOException {
+            RedirectAttributes redirectAttributes) throws IOException {
 
-        // Check if email already exists
-        Boolean existsEmail = userService.existsEmail(user.getEmail());
+// Check if email already exists
+Boolean existsEmail = userService.existsEmail(user.getEmail());
 
-        if (existsEmail) {
-            // Add error message if email already exists
-            redirectAttributes.addFlashAttribute("errorMsg", "Email already exists");
-            return "redirect:/register";
-        } else {
-            // Handle file upload
-            String imageName = file.isEmpty() ? "default.jpg" : file.getOriginalFilename();
-            user.setProfileImage(imageName);
+if (existsEmail) {
+redirectAttributes.addFlashAttribute("errorMsg", "Email already exists.");
+return "redirect:/register"; // Redirect to registration page
+}
 
-            try {
-                // Save user to the database
-                UserDtls saveUser = userService.saveUser(user);
 
-                if (saveUser != null) {
-                    if (!file.isEmpty()) {
-                        // Define the path where the file will be saved
-                        File saveFile = new ClassPathResource("static/img/profile_img").getFile();
-                        Path path = Paths.get(saveFile.getAbsolutePath(), imageName);
+// Generate OTP and send to email
+generatedOtp = UUID.randomUUID().toString().substring(0, 6); // Simple 6 digit OTP
 
-                        // Ensure directory exists
-                        Files.createDirectories(saveFile.toPath().getParent());
 
-                        // Save the file to the specified path
-                        Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-                    }
-                    // Add success message
-                    redirectAttributes.addFlashAttribute("msg", "Registration successful");
-                    return "redirect:/signin";
-                } else {
-                    // Add error message if user could not be saved
-                    redirectAttributes.addFlashAttribute("errorMsg", "Something went wrong on the server");
-                }
-            } catch (IOException e) {
-                // Handle file-related errors
-                e.printStackTrace();
-                redirectAttributes.addFlashAttribute("errorMsg", "Failed to save file: " + e.getMessage());
-            } catch (Exception e) {
-                // Handle unexpected errors
-                e.printStackTrace();
-                redirectAttributes.addFlashAttribute("errorMsg", "An unexpected error occurred: " + e.getMessage());
-            }
-        }
+sendEmailService.sendEmail(user.getEmail(), generatedOtp); 
 
-        // Redirect back to the registration page
-        return "redirect:/register";
+// Store user details temporarily (without saving to DB)
+userService.saveUser(user);  // You can save user data here
+redirectAttributes.addFlashAttribute("msg", "OTP Sent Successfully");
+// Redirect to OTP verification page
+return "redirect:/verifyOtp";
+}
+
+// OTP Verification Page
+@GetMapping("/verifyOtp")
+public String otpVerificationPage(Model model) {
+	model.addAttribute("pageTitle", "OTP Verification");
+	
+return "verifyOtp"; // This is the OTP verification page
+}
+
+// Verify OTP entered by user
+@PostMapping("/verifyOtp")
+public String verifyOtp(@RequestParam("otp") String enteredOtp, @ModelAttribute UserDtls user, RedirectAttributes redirectAttributes) {
+    if (generatedOtp != null && generatedOtp.equals(enteredOtp)) {
+        // OTP is correct, complete registration and send "Thank you for registering" email
+//        sendEmailService.sendEmail(user.getEmail(), "Thank you for registering!", 
+//                "Hi ,\n\nThank you for registering an account with us. We are excited to have you onboard!\n\nBest regards,\nYour Company");
+        redirectAttributes.addFlashAttribute("msg", "OTP Verified Successfully. You can now log in.");
+        return "redirect:/signin"; // Redirect to login page
+    } else {
+        redirectAttributes.addFlashAttribute("errorMsg", "Invalid OTP.");
+        return "redirect:/verifyOtp"; // Redirect to OTP page
+    }
+}
+
+
+
+
+
+
+
+
+@GetMapping("/forgot-password")
+public String showForgotPasswordPage() {
+    return "forgot_password"; // Return the forgot password page
+}
+
+@PostMapping("/forgot-password")
+public String processForgotPassword(@RequestParam String email, HttpSession session, HttpServletRequest request) {
+    // Check if the email exists in the database
+    UserDtls user = userService.getUserByEmail(email);
+    
+    if (user == null) {
+        session.setAttribute("errorMsg", "This email is not registered with us.");
+        return "redirect:/forgot-password"; // Stay on the same page with error message
     }
 
-    // Forgot Password Code 
-    @GetMapping("/forgot-password")
-    public String showForgotPassword(Model m) {
-    	m.addAttribute("pageTitle", "Forgot Password");
-        return "forgot_password.html";
+    try {
+        // Generate a reset token
+        String resetToken = UUID.randomUUID().toString();
+        userService.updateUserResetToken(email, resetToken);
+
+        // Generate the reset password link
+        String resetUrl = request.getRequestURL().toString().replace(request.getRequestURI(), "") + "/reset-password?token=" + resetToken;
+
+        // Send the reset link to the user's email
+        sendPasswordEmailService.sendPasswordResetLink(email, resetUrl);
+
+        // Set a success message indicating that the email has been sent
+        session.setAttribute("succMsg", "A password reset link has been sent to your email address.");
+
+        return "redirect:/forgot-password";  // Redirect back to the forgot password page with a success message
+
+    } catch (Exception e) {
+        session.setAttribute("errorMsg", "An error occurred while processing your request. Please try again.");
+        return "redirect:/forgot-password";  // Redirect back to the forgot password page with error message
+    }
+}
+
+@GetMapping("/reset-password")
+public String showResetPasswordPage(@RequestParam("token") String token, Model model) {
+    // Check if the reset token is valid
+    UserDtls user = userService.getUserByToken(token);
+    if (user == null) {
+        model.addAttribute("msg", "Your reset link is invalid or expired.");
+        return "message"; // Return an error page
+    }
+    
+    model.addAttribute("token", token);
+    return "reset_password"; // Show the reset password form
+}
+@PostMapping("/reset-password")
+public String processResetPassword(@RequestParam("token") String token, @RequestParam("password") String password,
+                                   RedirectAttributes redirectAttributes) {
+    // Find user by reset token
+    UserDtls user = userService.getUserByToken(token);
+    if (user == null) {
+        redirectAttributes.addFlashAttribute("errorMsg", "Your reset link is invalid or expired.");
+        return "redirect:/signin"; // Redirect to login page with an error message
     }
 
-    @PostMapping("/forgot-password")
-    public String processForgotPassword(@RequestParam String email, HttpSession session, HttpServletRequest request) {
-        UserDtls userByEmail = userService.getUserByEmail(email);
+    // Update the user's password
+    user.setPassword(passwordEncoder.encode(password)); // Encode the password
+    user.setResetToken(null); // Remove the reset token
+    userService.updateUser(user); // Update user details in the database
 
-        if (ObjectUtils.isEmpty(userByEmail)) {
-            session.setAttribute("errorMsg", "Invalid email address.");
-            logger.warn("Forgot password request with invalid email: {}", email);
-            return "redirect:/forgot-password";
-        }
+    redirectAttributes.addFlashAttribute("msg", "Your password has been successfully reset.");
+    return "redirect:/signin"; // Redirect to login page
+}
 
-        try {
-            String resetToken = UUID.randomUUID().toString();
-            userService.updateUserResetToken(email, resetToken);
-
-            // Generate reset link
-            String resetUrl = commonUtil.generateUrl(request) + "/reset-password?token=" + resetToken;
-            logger.info("Password reset token generated for email: {}. Reset link: {}", email, resetUrl);
-
-            // Redirect the user to the password reset page with the token
-            return "redirect:/reset-password?token=" + resetToken;
-
-        } catch (Exception e) {
-            logger.error("Error processing password reset for email: {}", email, e);
-            session.setAttribute("errorMsg", "An error occurred while processing your request. Please try again later.");
-            return "redirect:/forgot-password";
-        }
-    }
-
-    @GetMapping("/reset-password")
-    public String showResetPassword(@RequestParam String token, HttpSession session, Model m) {
-        UserDtls userByToken = userService.getUserByToken(token);
-
-        if (userByToken == null) {
-            m.addAttribute("msg", "Your link is invalid or expired !!");
-            return "message";
-        }
-        m.addAttribute("token", token);
-        m.addAttribute("pageTitle", "Reset Password");
-        return "reset_password";
-    }
-
-    @PostMapping("/reset-password")
-    public String resetPassword(@RequestParam String token, @RequestParam String password, 
-                                HttpSession session, RedirectAttributes redirectAttributes) {
-        UserDtls userByToken = userService.getUserByToken(token);
-        if (userByToken == null) {
-            redirectAttributes.addFlashAttribute("errorMsg", "Your link is invalid or expired !!");
-            return "redirect:/signin";
-        } else {
-            userByToken.setPassword(passwordEncoder.encode(password));
-            userByToken.setResetToken(null);
-            userService.updateUser(userByToken);
-
-            redirectAttributes.addFlashAttribute("msg", "Password changed successfully");
-            return "redirect:/signin";
-        }
-    }
 
     @GetMapping("/search")
     public String searchProduct(@RequestParam String ch, Model m) {

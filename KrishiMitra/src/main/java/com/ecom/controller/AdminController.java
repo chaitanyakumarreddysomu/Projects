@@ -7,6 +7,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.List;
 
@@ -14,29 +17,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ecom.model.Category;
+import com.ecom.model.Coupon;
 import com.ecom.model.Product;
 import com.ecom.model.ProductOrder;
 import com.ecom.model.UserDtls;
 import com.ecom.service.CartService;
 import com.ecom.service.CategoryService;
+import com.ecom.service.CouponService;
 import com.ecom.service.OrderService;
 import com.ecom.service.ProductService;
 import com.ecom.service.UserService;
 import com.ecom.util.CommonUtil;
 import com.ecom.util.OrderStatus;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -596,4 +610,182 @@ public class AdminController {
 		return "redirect:/admin/profile";
 	}
 
+	
+	@Autowired
+    private CouponService couponService;
+
+	@GetMapping("/coupon/add")
+	public String addCoupon(Model model) {
+		model.addAttribute("pageTitle", "coupon");
+		return "/admin/add_coupon";
+	}
+	
+    // Endpoint to add a new coupon
+	 @PostMapping("/coupon/add")
+	    public String addCoupon(@RequestParam String code,
+	                            @RequestParam double discountPercentage,
+	                            @RequestParam String expiresOn,
+	                            @RequestParam boolean oneTimeUse,
+	                            HttpSession session) {
+
+	        // Convert expiresOn string to Date
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+	        java.util.Date expirationDate = null;
+	        try {
+	            expirationDate = sdf.parse(expiresOn);  // Parsing date from string
+	        } catch (ParseException e) {
+	            session.setAttribute("errorMsg", "Invalid expiration date format");
+	            return "redirect:/admin/coupons";  // Redirect back to /admin/coupons on error
+	        }
+
+	        // Create Coupon object
+	        Coupon coupon = new Coupon();
+	        coupon.setCode(code);
+	        coupon.setDiscountPercentage(discountPercentage);
+	        coupon.setExpiresOn(expirationDate);
+	        coupon.setOneTimeUse(oneTimeUse);
+	        coupon.setUsed(false);  // Default value for 'used'
+
+	        // Save the coupon using the service
+	        Coupon savedCoupon = couponService.addCoupon(coupon);
+
+	        // Check if the coupon was saved successfully or not
+	        if (savedCoupon == null) {
+	            session.setAttribute("errorMsg", "Not saved! Internal server error");
+	        } else {
+	            session.setAttribute("succMsg", "Coupon Added successfully");
+	        }
+
+	        // Redirect back to /admin/coupons
+	        return "redirect:/admin/coupon";
+	    }   
+	 @GetMapping("/coupon")
+	    public String viewCoupons(Model model, HttpSession session) {
+	        List<Coupon> coupons = couponService.getAllCoupons();
+
+	        // Log the number of coupons being passed to the model
+	
+
+	        // Add coupons and messages to the model
+	        model.addAttribute("coupons", coupons);
+	        model.addAttribute("succMsg", session.getAttribute("succMsg"));
+	        model.addAttribute("errorMsg", session.getAttribute("errorMsg"));
+
+	        // Clear session attributes after displaying them
+	        session.removeAttribute("succMsg");
+	        session.removeAttribute("errorMsg");
+
+	        return "admin/coupon";  // Thymeleaf template to display coupons
+	    }
+
+
+	 
+	 
+	 
+	 @GetMapping("/coupon/edit/{id}")
+	 public String showEditForm(@PathVariable Long id, Model model, HttpSession session) {
+	     Coupon coupon = couponService.getCouponById(id);
+	     if (coupon == null) {
+	         session.setAttribute("errorMsg", "Coupon not found");
+	         return "redirect:/admin/coupons";  // Redirect back if coupon not found
+	     }
+	     model.addAttribute("coupon", coupon);
+	     return "admin/editCoupon";  // Thymeleaf template for editing the coupon
+	 }
+	 
+	 @GetMapping("/loadEditCoupon/{id}")
+		public String loadEditCoupon(@PathVariable Long id, Model m,@ModelAttribute Coupon coupon) {
+			m.addAttribute("coupon", couponService.getCouponById(coupon.getId()));
+			m.addAttribute("pageTitle", "EditCoupon");
+			return "admin/editCoupon";
+		}
+	 
+	 
+	 
+	   @PostMapping("/updateCoupon")
+	    public String updateCoupon(@ModelAttribute Coupon coupon, HttpSession session) {
+	        Coupon existingCoupon = couponService.getCouponById(coupon.getId());
+
+	        // If the coupon is not found, show an error message
+	        if (existingCoupon != null) {
+	            // Update the existing coupon details
+	            existingCoupon.setCode(coupon.getCode());
+	            existingCoupon.setDiscountPercentage(coupon.getDiscountPercentage());
+	            existingCoupon.setExpiresOn(coupon.getExpiresOn());
+	            existingCoupon.setOneTimeUse(coupon.isOneTimeUse());
+
+	            // Save the updated coupon
+	            Coupon updatedCoupon = couponService.saveCoupon(existingCoupon);
+
+	            // Check if the update was successful
+	            if (updatedCoupon != null) {
+	                session.setAttribute("succMsg", "Coupon updated successfully");
+	            } else {
+	                session.setAttribute("errorMsg", "Something went wrong on the server");
+	            }
+	        } else {
+	            session.setAttribute("errorMsg", "Coupon not found");
+	        }
+
+	        // Redirect back to the edit form page for the coupon
+	        return "redirect:/loadEditCoupon/" + coupon.getId();
+	    }
+
+	    // Endpoint to handle editing a coupon
+	    @PostMapping("/coupon/edit/{id}")
+	    public String editCoupon(@PathVariable Long id,
+	                              @RequestParam String code,
+	                              @RequestParam double discountPercentage,
+	                              @RequestParam String expiresOn,
+	                              @RequestParam boolean oneTimeUse,
+	                              HttpSession session) {
+
+	        // Convert expiresOn string to Date
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+	        java.util.Date expirationDate = null;
+	        try {
+	            expirationDate = sdf.parse(expiresOn);  // Parsing date from string
+	        } catch (ParseException e) {
+	            session.setAttribute("errorMsg", "Invalid expiration date format");
+	            return "redirect:/coupon/edit/" + id;  // Redirect back to the edit form
+	        }
+
+	        // Create an updated coupon object
+	        Coupon updatedCoupon = new Coupon();
+	        updatedCoupon.setCode(code);
+	        updatedCoupon.setDiscountPercentage(discountPercentage);
+	        updatedCoupon.setExpiresOn(expirationDate);
+	        updatedCoupon.setOneTimeUse(oneTimeUse);
+
+	        // Call service to edit the coupon
+	        Coupon savedCoupon = couponService.editCoupon(id, updatedCoupon);
+
+	        // Check if the coupon was updated successfully or not
+	        if (savedCoupon == null) {
+	            session.setAttribute("errorMsg", "Coupon update failed");
+	        } else {
+	            session.setAttribute("succMsg", "Coupon updated successfully");
+	        }
+
+	        // Redirect to the coupon list
+	        return "redirect:/admin/coupon";
+	    }
+
+	
+	    
+		@GetMapping("/deleteCoupon/{id}")
+		public String deleteCoupon(@PathVariable long id, HttpSession session) {
+			Boolean deleteCoupon = couponService.deleteCoupon(id);
+
+			if (deleteCoupon) {
+				session.setAttribute("succMsg", "category delete success");
+			} else {
+				session.setAttribute("errorMsg", "something wrong on server");
+			}
+
+			return "redirect:/admin/coupon";
+		}
+		
+	
+	
 }

@@ -38,27 +38,31 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDtls saveUser(UserDtls user) {
-        user.setRole("ROLE_USER");
-        user.setIsEnable(true);
-        user.setAccountNonLocked(true);
-        user.setFailedAttempt(0);
+	    user.setRole("ROLE_USER");
+	    user.setIsEnable(true);
+	    user.setAccountNonLocked(true);
+	    user.setFailedAttempt(0);
 
-        // Encode the password
-        String encodePassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodePassword);
+	    // Log user data before saving
+	    System.out.println("Saving user: " + user);
 
-        try {
-            return userRepository.save(user);
-        } catch (DataIntegrityViolationException e) {
-            // Log the exception (optional)
-            // e.printStackTrace();
-            throw new RuntimeException("Email address already in use");
-        } catch (Exception e) {
-            // Log the exception (optional)
-            // e.printStackTrace();
-            throw new RuntimeException("An unexpected error occurred");
-        }
-    }
+	    // Encode the password
+	    String encodePassword = passwordEncoder.encode(user.getPassword());
+	    user.setPassword(encodePassword);
+
+	    try {
+	        return userRepository.save(user);
+	    } catch (DataIntegrityViolationException e) {
+	        // Log the exception (optional)
+	        System.out.println("Data Integrity Violation: " + e.getMessage());
+	        throw new RuntimeException("Email address already in use");
+	    } catch (Exception e) {
+	        // Log the exception (optional)
+	        System.out.println("Unexpected error: " + e.getMessage());
+	        e.printStackTrace();  // Print stack trace for more detailed information
+	        throw new RuntimeException("An unexpected error occurred");
+	    }
+	}
 
 	@Override
 	public UserDtls getUserByEmail(String email) {

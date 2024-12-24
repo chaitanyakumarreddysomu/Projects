@@ -131,6 +131,8 @@
 										              <label class="form-check-label" for="flexRadioDefault2">Inactive</label>
 										          </div>
 										      </div>
+											  
+											  
 
 										      <div class="mb-3 row">
 										          <div class="col">
@@ -139,7 +141,7 @@
 										          </div>
 										          <div class="col">
 										              <label>Upload Image</label>
-										              <input type="file" name="file" class="form-control" required>
+										               <input type="file" name="files" class="form-control" multiple required>
 										          </div>
 										      </div>
 
@@ -295,7 +297,40 @@
 			    document.getElementById('averageModalPriceInput').value = adjustedPrice.toFixed(2); // Formatting the price to 2 decimal places
 			  });
 			});
+/*
+// Assuming you've fetched sensor data and stored it in the 'sensorData' variable
+let sensorData = {
+  mq135: 300, // Example: Air quality index (could be CO2, NH3, etc.)
+  moisture: 45, // Soil moisture level (0 to 100 scale)
+  color: 120 // Color sensor value (could be RGB values, simplified here)
+};
 
+// Calculate quality based on the selected commodity
+document.getElementById('quality').addEventListener('change', function() {
+  const selectedCommodity = document.getElementById('commoditySelect').value;
+  let quality = 'good'; // Default to good
+
+  if (selectedCommodity === 'banana') {
+    // For banana, use MQ-135 (air quality) and TCS3200 (color sensor data) for quality
+    if (sensorData.color < 100) {
+      quality = 'bad'; // Example: If color value is below threshold, mark as bad quality
+    } else if (sensorData.mq135 > 400) {
+      quality = 'avg'; // If air quality is poor, mark as average quality
+    }
+  } else if (selectedCommodity === 'rice') {
+    // For rice, use moisture and MQ-135 to determine quality
+    if (sensorData.moisture < 30) {
+      quality = 'bad'; // If moisture is low, mark as bad quality
+    } else if (sensorData.mq135 > 300) {
+      quality = 'avg'; // If air quality is moderate, mark as average quality
+    }
+  }
+
+  // Update the quality input field based on calculated quality
+  document.getElementById('quality').value = quality;
+});
+
+*/
 
 					   </script>
     </section>

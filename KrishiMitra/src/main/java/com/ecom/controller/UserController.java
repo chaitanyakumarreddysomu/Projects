@@ -19,18 +19,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ecom.exceptions.ResourceNotFoundException;
 import com.ecom.model.Cart;
 import com.ecom.model.Category;
+import com.ecom.model.Coupon;
 import com.ecom.model.OrderRequest;
 import com.ecom.model.ProductOrder;
 import com.ecom.model.UserDtls;
 import com.ecom.repository.UserRepository;
 import com.ecom.service.CartService;
 import com.ecom.service.CategoryService;
+import com.ecom.service.CouponService;
 import com.ecom.service.OrderService;
 import com.ecom.service.UserService;
 import com.ecom.util.CommonUtil;
@@ -57,7 +60,8 @@ public class UserController {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-
+	@Autowired
+    private CouponService couponService;
 
 
 	@GetMapping("/")
@@ -171,6 +175,11 @@ public class UserController {
 	        m.addAttribute("taxAmount", taxAmount);
 	        m.addAttribute("totalOrderPrice", totalOrderPriceRounded.intValue());  // Add total order price as an integer
 	    }
+	    
+	    
+
+	    // Endpoint to apply coupon during checkout
+	   
 
 	    return "/user/order";
 	}
@@ -284,5 +293,5 @@ public class UserController {
 	}
 	
 	
-
+	
 }

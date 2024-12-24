@@ -34,10 +34,15 @@ public class ProductOrder {
 	
 
 
+	 private double totalAmount;
+	    private double discountAmount;
+	    private double finalAmount;
 
 
-
-
+	    public void applyDiscount(double discount) {
+	        this.discountAmount = discount;
+	        this.finalAmount = this.totalAmount - this.discountAmount;
+	    }
 
 	private LocalDate orderDate;
 
@@ -143,7 +148,32 @@ public class ProductOrder {
 	}
 	
 	
+	
 
+
+	public double getTotalAmount() {
+		return totalAmount;
+	}
+
+	public void setTotalAmount(double totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+
+	public double getDiscountAmount() {
+		return discountAmount;
+	}
+
+	public void setDiscountAmount(double discountAmount) {
+		this.discountAmount = discountAmount;
+	}
+
+	public double getFinalAmount() {
+		return finalAmount;
+	}
+
+	public void setFinalAmount(double finalAmount) {
+		this.finalAmount = finalAmount;
+	}
 
 	public Integer getSellerId() {
 		return sellerId;

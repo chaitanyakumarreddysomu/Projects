@@ -69,13 +69,16 @@
 									</div>
 								</div>
 								<hr/>
-								<div class="table-responsive" style="overflow-y:scroll ; height: 400px;overflow-x:hidden ; ">
+								<div class="table-responsive" style="overflow-y:scroll ; height: 400px;overflow-x:scroll ; ">
 									<table class="table align-middle mb-0">
 										<thead class="table-light">
 											<tr>
 												<th>Order id</th>
 												<th>Product</th>
 												<th>Customer</th>
+												<th>Address</th>
+												<th>pincode</th>
+												<th>mobile number</th>
 												<th>Date</th>
 												<th>Price</th>
 												<th>Qty</th>
@@ -83,6 +86,7 @@
 												<th>Status</th>
 												<th>Action</th>
 												
+
 											</tr>
 										</thead>
 										<tbody >
@@ -98,6 +102,9 @@
 													</div>
 												</td>
 												<td>[[${o.orderAddress.firstName+''+o.orderAddress.lastName}]]</td>
+												<td>[[${o.orderAddress.address+','+o.orderAddress.city+','+o.orderAddress.state}]]</td>
+												<td>[[${o.orderAddress.pincode}]]</td>
+												<td>[[${o.orderAddress.mobileNo}]]</td>
 												<td>[[${o.orderDate}]]</td>
 												<td>&#8377;[[${o.price}]]</td>
 												<td>[[${o.quantity}]]</td>

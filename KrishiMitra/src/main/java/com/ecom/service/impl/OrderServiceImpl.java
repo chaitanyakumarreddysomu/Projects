@@ -16,15 +16,20 @@ import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ecom.exceptions.CouponExpiredException;
+import com.ecom.exceptions.CouponNotFoundException;
 import com.ecom.model.Cart;
+import com.ecom.model.Coupon;
 import com.ecom.model.OrderAddress;
 import com.ecom.model.OrderRequest;
 import com.ecom.model.Product;
 import com.ecom.model.ProductOrder;
 
 import com.ecom.repository.CartRepository;
+import com.ecom.repository.CouponRepository;
 import com.ecom.repository.ProductOrderRepository;
 import com.ecom.repository.ProductRepository;
+import com.ecom.service.CouponService;
 import com.ecom.service.OrderService;
 import com.ecom.util.CommonUtil;
 import com.ecom.util.OrderStatus;
@@ -38,6 +43,12 @@ public class OrderServiceImpl implements OrderService {
 
 	@Autowired
 	private ProductOrderRepository orderRepository;
+	
+	@Autowired
+    private CouponService couponService;
+	
+	@Autowired
+	private CouponRepository couponRepository;
 	
 	@Autowired
 	private ProductRepository productRepository;
@@ -170,6 +181,8 @@ public class OrderServiceImpl implements OrderService {
 	        Double totalIncome = orderRepository.sumPriceByStatus(status);
 	        return (totalIncome != null) ? totalIncome : 0.0; // Handle null if no income
 	    }
+	 
+	
 	 
 
 

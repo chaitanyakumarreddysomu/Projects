@@ -7,11 +7,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import org.springframework.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,9 +32,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ecom.model.Category;
+import com.ecom.model.OrderAddress;
 import com.ecom.model.Product;
 import com.ecom.model.ProductOrder;
 import com.ecom.model.UserDtls;
@@ -36,12 +46,17 @@ import com.ecom.service.CategoryService;
 import com.ecom.service.OrderService;
 import com.ecom.service.ProductService;
 import com.ecom.service.SeleniumService;
+
+
 import com.ecom.service.SeleniumService.MarketData;
+import com.ecom.service.SendEmailService1;
 import com.ecom.service.UserService;
 import com.ecom.util.CommonUtil;
 import com.ecom.util.OrderStatus;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
+import com.ecom.service.sendProductEmailService;
 
 @Controller
 @RequestMapping("/seller")
@@ -49,6 +64,10 @@ public class SellerController {
 
     @Autowired
     private CategoryService categoryService;
+    
+    @Autowired
+    private sendProductEmailService sendProductEmailService;
+  
 
     @Autowired
     private ProductService productService;
@@ -62,6 +81,9 @@ public class SellerController {
     @Autowired
     private CommonUtil commonUtil;
 
+    @Autowired
+    private SendEmailService1 SendEmailService1;
+    
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -92,6 +114,7 @@ public class SellerController {
 
         // Fetch orders for the seller's products
         Page<ProductOrder> page = orderService.getOrdersBySellerIdPagination1(loggedInUser.getId(), pageNo, pageSize);
+
         model.addAttribute("pageTitle", "Seller Dashboard");
         model.addAttribute("orders", page.getContent());
         model.addAttribute("pageNo", page.getNumber());
@@ -260,6 +283,7 @@ public class SellerController {
 
         // Fetch orders for the seller's products
         Page<ProductOrder> page = orderService.getOrdersBySellerIdPagination1(loggedInUser.getId(), pageNo, pageSize);
+      
         model.addAttribute("pageTitle", "Orders");
         model.addAttribute("orders", page.getContent());
         model.addAttribute("pageNo", page.getNumber());
@@ -274,12 +298,14 @@ public class SellerController {
 
         return "seller/orders";
     }
-    
     @PostMapping("/update-order-status")
     public String updateOrderStatus(@RequestParam Integer id, 
                                      @RequestParam Integer st, 
                                      HttpSession session, 
-                                     @AuthenticationPrincipal UserDetails userDetails) {
+                                     @AuthenticationPrincipal UserDetails userDetails,
+                                  	 Model model, Principal principal
+                                     ) {
+   
         // Retrieve the logged-in user's email
         String email = userDetails.getUsername();
         UserDtls loggedInUser = userService.getUserByEmail(email);
@@ -311,11 +337,14 @@ public class SellerController {
         // Update the order status
         ProductOrder updatedOrder = orderService.updateOrderStatus(id, status);
 
-        // Send email notification
-        // Implement email notification logic here if needed
-
-        // Set success or error message
-        if (updatedOrder != null) {
+        // Check if the status is "Packed" and trigger Shiprocket API if true
+        if (updatedOrder != null && "Packed".equals(status)) {
+            
+            sendOrderToShiprocket(updatedOrder, model, principal);// Call method to send order to Shiprocket
+            sendEmailToBuyer(updatedOrder, status);  // Call email service
+            session.setAttribute("succMsg", "Status Updated and Shipment Process Started.");
+        } else if (updatedOrder != null) {
+            sendEmailToBuyer(updatedOrder, status);  // Call email service for other status updates
             session.setAttribute("succMsg", "Status Updated Successfully.");
         } else {
             session.setAttribute("errorMsg", "Failed to update status.");
@@ -323,9 +352,105 @@ public class SellerController {
 
         // Redirect to the intended page after the update
         return "redirect:/seller/"; // Update this path based on where you want to redirect
+    
+    }
+    private void sendEmailToBuyer(ProductOrder order, String status) {
+        String buyerEmail = order.getUser().getEmail();  // Get the buyer's email
+
+        String subject = "Your Order Status Has Been Updated";
+        String body = "Your order status has been updated!"
+                    + "Dear " + order.getUser().getName() + "\n"
+                    + "Your order with the ID: " + order.getOrderId() + " has been updated to the status: " + status + ".\n"
+                    + "We will notify you if there are further updates. \n"
+                    + "Thank you for shopping with us! \n"
+                    + "Best regards,<br>Your Company Name \n";
+        
+        try {
+            // Call sendEmailService to send the email to the buyer
+            SendEmailService1.sendEmail(buyerEmail, subject, body);
+            System.out.println("Email sent successfully to: " + buyerEmail);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            // Log or handle the exception here
+            System.out.println("Error while sending email: " + e.getMessage());
+        }
+    }
+    private void sendOrderToShiprocket(ProductOrder order,Model model, Principal principal) {
+        // Shiprocket API Integration
+        String shiprocketApiUrl = "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc";
+        String apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjU1MzA1MTcsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzM0ODc1ODg1LCJqdGkiOiJrbWtkSklKMDdPcmFnWU9FIiwiaWF0IjoxNzM0MDExODg1LCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTczNDAxMTg4NSwiY2lkIjo1MzI2NDg0LCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.VyXFbJv7SCQVHFO49XErOQJGG44kEIU4DnDGuIWl-CY"; // Store securely in application.properties or environment variables
+
+        // Fetch seller (UserDtls) using sellerId from ProductOrder
+        String email = principal.getName();
+        UserDtls loggedInUser = userService.getUserByEmail(email);
+  // Assuming you have a method to fetch UserDtls by ID
+        String sellerAddress = loggedInUser.getPincode(); 
+        
+
+        
+        
+        // Fetch buyer (UserDtls) from ProductOrder
+        UserDtls buyer = order.getUser();  // Get the buyer from the order
+        
+        String buyerName =  buyer.getName();
+        String buyerAddress =  buyer.getAddress();
+        String buyerPincode =  buyer.getPincode();
+        // Get the buyer's address
+
+        // Prepare the payload for Shiprocket API
+        Map<String, Object> payload = new HashMap<>();
+        Map<String, Object> orderDetails = new HashMap<>();
+        orderDetails.put("order_id", order.getOrderId());
+        orderDetails.put("order_date", order.getOrderDate());
+        orderDetails.put("pickup_location", sellerAddress); // Seller Pincode
+
+        // Seller address details
+        orderDetails.put("sender", Map.of(
+            "name", loggedInUser.getName(),
+            "email", loggedInUser.getEmail(),
+            "phone", loggedInUser.getMobileNumber(),
+            "address", loggedInUser.getAddress(),
+            "city", loggedInUser.getCity(),
+            "state", loggedInUser.getState(),
+            "pincode", loggedInUser.getPincode()
+        ));
+
+        // Buyer address details
+        orderDetails.put("receiver", Map.of(
+            "name",  buyer.getName(),
+            "email", buyer.getEmail(),
+            "phone", buyer.getMobileNumber(),
+            "address", buyer.getAddress(),
+            "city", buyer.getCity(),
+            "state", buyer.getState(),
+            "pincode", buyer.getPincode()
+        ));
+
+        // Add any other necessary fields like order value, items, etc.
+        orderDetails.put("order_items", order.getProduct()); // Assuming you have order items in the order
+
+        payload.put("order", orderDetails);
+
+        // Send the request to Shiprocket API
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + apiKey);
+            HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(payload, headers);
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.exchange(shiprocketApiUrl, HttpMethod.POST, requestEntity, String.class);
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                System.out.println("Shiprocket API: Order created successfully.");
+            } else {
+                System.out.println("Error in creating order with Shiprocket: " + response.getBody());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error while sending order to Shiprocket: " + e.getMessage());
+        }
     }
 
-    
 
     @GetMapping("/dashboard")
     public String dashboard(Model m, Principal p) {
