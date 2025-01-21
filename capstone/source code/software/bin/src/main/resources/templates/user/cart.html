@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<section>
+		<style>
+			.disabled {
+			    pointer-events: none; /* Prevents click events */
+			    opacity: 0.5; /* Makes it look inactive */
+			}
+		</style>
+		<!--assistant button-->
+				<button id="voice-button" class="text-white " style="position: fixed; z-index: 2147483647; right: 25px; bottom: 70px; 
+				width: 50px; height: 50px; border: none; border-radius: 100%;
+				 background:linear-gradient(-120deg,#4285f4,#34a853,#fbbc05,#ea4335) ;"><i class="fa fa-microphone"></i></button>
+				 
+				 <audio id="notification-sound" th:src="@{/assets/sounds/notify.mp3}" preload="auto"></audio>
+				 <!--assistant button-->
+				 
+				 
+				 <!--chat bot-->
+				 	 
+				 		<button id="chatbot-button" class="text-white " style="position: fixed; z-index: 2147483647; right: 25px; bottom: 125px; 
+				 		 		width: 50px; height: 50px; border: none; border-radius: 100%;
+				 		 		 background:linear-gradient(-120deg,rgb(120, 211, 170),rgb(41, 129, 89),#3bb77e) ;"><i class='fa-solid fa-robot' style='font-size:24px'></i></button>
+				 		 
+				 				 
+				 				 
+				 				 <div class="chat">
+				 		 			<div class="chat-title">
+				 		 			<h1 style="color:#fff">AgriMate</h1>
+				 		 			<button class="close-btn"><i class="fa fa-times	"></i></button>
+				 		 			</div>
+				 		 			<div class="messages">
+				 		 			<div class="messages-content"></div>
+				 		 			</div>
+				 		 			<div class="message-box">
+				 		 			<input type="text" class="message-input" placeholder="Type message..."></input>
+				 		 			<button type="submit" class="message-submit"><i class="fa-solid fa-paper-plane" style='font-size:24px'></i></button>
+				 		 			</div>
+				 		 		</div>
+				 	 <!--chat bot-->
+		<div id="toast-container">
+						        <th:block th:if="${session.succMsg}">
+						            <div class="toast success" data-message-type="success">
+						                <p class="toast-text" th:text="${session.succMsg}"></p>
+						            </div>
+						        </th:block>
+
+						        <th:block th:if="${session.errorMsg}">
+						            <div class="toast error" data-message-type="error">
+						                <p class="toast-text" th:text="${session.errorMsg}"></p>
+						            </div>
+						        </th:block>
+						    </div>
+		<main class="main">
+		      
+		       <div class="container mb-80 mt-50">
+		           <div class="row">
+		               <div class="col-lg-8 mb-40">
+		                   <h1 class="heading-2 mb-10">Your Cart</h1>
+		                   <div class="d-flex justify-content-between">
+		                       <h6 class="text-body">There are <span class="text-brand">[[${numberOfItems}]]</span> products in your cart</h6>
+		                       
+		                   </div>
+		               </div>
+		           </div>
+		           <div class="row">
+		               <div class="col-lg-8">
+		                   <div class="table-responsive shopping-summery">
+		                     <table class="table table-wishlist">
+    <thead>
+        <tr class="main-heading" >
+            <th scope="col">Product</th>
+			<th scope="col">Title</th>
+            <th scope="col">Unit Price</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Subtotal</th>
+            <th scope="col">Action</th> <!-- New header for the delete button -->
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="cart, c:${carts}">
+            <td class="image product-thumbnail">
+                <img th:src="@{'/img/product_img/' + ${cart.product.image}}">
+            </td>
+            <td class="product-des product-name">
+                <h6 class="mb-5"><a class='product-name mb-10 text-heading'>[[${cart.product.title}]]</a></h6>
+            </td>
+            <td class="price" data-title="Price">
+                <h4 class="text-body">[[${cart.product.discountPrice}]]</h4>
+            </td>
+            
+			
+			
+			<td class="text-center detail-info" data-title="Stock"> 
+			    <div class="detail-extralink mr-15">
+			        <div class="detail-qty border radius">
+			            <a th:href="@{'/user/cartQuantityUpdate?sy=de&cid=' + ${cart.id}}" 
+			               class="qty-down" 
+			               th:disabled="${cart.quantity == 1}" 
+			               th:classappend="${cart.quantity == 1} ? 'disabled' : ''">
+			                <i class="fi-rs-angle-small-down"></i>
+			            </a>
+			            <input type="text" name="quantity" class="qty-val" th:value="${cart.quantity}" min="1" th:max="${cart.product.stock}" readonly>
+			            <a th:href="@{'/user/cartQuantityUpdate?sy=in&cid=' + ${cart.id}}" class="qty-up" 
+			               th:if="${cart.quantity < cart.product.stock}">
+			                <i class="fi-rs-angle-small-up"></i>
+			            </a>
+			        </div>
+			    </div>
+			</td>
+
+			
+			
+            <td class="price" data-title="Subtotal">
+                <h4 class="text-brand">[[${cart.totalPrice}]]</h4>
+            </td>
+            <td class="action" data-title="Action"> <!-- New column for delete action -->
+                <a th:href="@{'/user/cartRemove?cid=' + ${cart.id}}" class="btn btn-danger" onclick="return confirm('Are you sure you want to remove this item?');">
+                    <i class="fa-solid fa-trash"></i>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+		                   </div>
+		                   <div class="divider-2 mb-30"></div>
+		                   <div class="cart-action d-flex justify-content-between">
+		                       <a class="btn" href="/products"><i class="fi-rs-arrow-left mr-10"></i>Continue Shopping</a>
+		                       
+		                   </div>
+		                   <div class="row mt-50">
+		                       
+		                       
+		                   </div>
+		               </div>
+		               <div class="col-lg-4">
+		                   <div class="border p-md-4 cart-totals ml-30">
+		                       <div class="table-responsive">
+		                           <table class="table no-border">
+		                               <tbody>
+		                                   <tr>
+		                                       <td class="cart_total_label">
+		                                           <h6 class="text-muted">Subtotal</h6>
+		                                       </td>
+		                                       <td class="cart_total_amount">
+		                                           <h4 class="text-brand text-end">[[${totalOrderPrice}]]</h4>
+		                                       </td>
+		                                   </tr>
+		                                   
+		                                   
+		                                       
+		                                   
+		                               </tbody>
+		                           </table>
+		                       </div>
+		                       <a href="/user/orders" class="btn mb-20 w-100">Proceed To CheckOut<i class="fi-rs-sign-out ml-15"></i></a>
+		                   </div>
+		               </div>
+		           </div>
+		       </div>
+		   </main>
+
+		   <script>
+		       document.querySelectorAll('.qty-up').forEach(button => {
+		           button.addEventListener('click', function(event) {
+		               event.preventDefault();
+		               const input = this.parentNode.querySelector('.qty-val');
+		               const newValue = Math.min(parseInt(input.value) + 1, parseInt(input.max));
+		               input.value = newValue;
+		               // Optionally, you could send an AJAX request here to update the cart immediately
+		               window.location.href = this.href; // Redirect to the backend to update the cart
+		           });
+		       });
+
+		       document.querySelectorAll('.qty-down').forEach(button => {
+		           button.addEventListener('click', function(event) {
+		               event.preventDefault();
+		               const input = this.parentNode.querySelector('.qty-val');
+		               const newValue = Math.max(parseInt(input.value) - 1, 1);
+		               input.value = newValue;
+		               // Optionally, you could send an AJAX request here to update the cart immediately
+		               window.location.href = this.href; // Redirect to the backend to update the cart
+		           });
+		       });
+		   </script>
+
+		   
+	</section>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<main class="main">
+		       
+    <div class="container mb-30">
+        <div class="row">
+            <th:block th:if="${session.succMsg}">
+                                    <p class="text-success alert alert-success text-center" role="alert">[[${session.succMsg}]]</p>
+                                    <th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+                                </th:block>
+
+                                <th:block th:if="${session.errorMsg}">
+                                    <p class="text-danger text-center  alert alert-danger">[[${session.errorMsg}]]</p>
+                                    <th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+
+                                </th:block>
+
+            <div class="col-xl-10 col-lg-12 m-auto">
+                <div class="product-detail accordion-detail">
+                    <div class="row mb-50 mt-30">
+                        <div class="col-md-6 col-sm-12 col-xs-12 mb-md-0 mb-sm-5">
+                            <div class="detail-gallery">
+                                
+                                <!-- MAIN SLIDES -->
+                                <div class="product-image-slider">
+                                    <figure class="border-radius-10">
+                                        <img alt="" th:src="@{'/img/product_img/'+${product.image}} " width="300px" height="350px">
+                                    </figure>
+                                    
+                                </div>
+                                <!-- THUMBNAILS -->
+                               
+                            </div>
+                            <!-- End Gallery -->
+                        </div>
+                        <div class="col-md-6 col-sm-12 col-xs-12">
+                            <div class="detail-info pr-30 pl-30">
+                                
+                                <th:block th:unless="${product.stock>0}">
+                                    <span class="stock-status out-stock">out of stock</span>
+                                </th:block>
+
+
+                                
+                                <h2 class="title-detail">[[${product.title}]]</h2>
+                                <div class="product-detail-rating">
+                                    
+                                </div>
+                                <div class="clearfix product-price-cover">
+                                    <div class="product-price primary-color float-left">
+                                        <span class="current-price text-brand">[[${product.discountPrice}]]</span>
+                                        <span>
+                                            <span class="save-price font-md color3 ml-15">[[${product.discount}]]% Off</span>
+                                            <span class="old-price font-md ml-15">[[${product.price}]]</span>
+                                        </span>
+                                    </div>
+                                </div>
+                        <div class="short-desc mb-30">
+                            <p class="font-lg" style="display: -webkit-box;
+                                           -webkit-line-clamp: 2;
+                                           -webkit-box-orient: vertical;
+                                           overflow: hidden;
+                                           text-overflow: ellipsis;">[[${product.description}]]</p>
+                                </div>
+                               
+                                <div class="detail-extralink mb-50">
+                                    
+                                    <div class="product-extra-link2">
+                                        
+                                        
+                                        
+                                        
+                                        <th:block th:if="${product.stock>0}">
+                                            <th:block th:if="${user==null}">
+                                                    <a href="/signin" class="w-100" ><button class="button button-add-to-cart w-100"><i class="fi-rs-shopping-cart"></i>Add to cart</button></a>
+                                            </th:block>
+                                            <th:block th:unless="${user==null}">
+                                                <a th:href="@{'/user/addCart?pid='+${product.id}+'&uid='+${user.id}}" class="w-100" ><button class="button button-add-to-cart w-100"><i class="fi-rs-shopping-cart"></i>Add to cart</button></a>
+                                            </th:block>
+                                        </th:block>
+                                        
+                                        
+                                        <th:block th:unless="${product.stock > 0}">
+                                            <button class="button button-out-of-stock w-100 bg-secondary text-white" disabled>
+                                                <i class="fi-rs-shopping-cart"></i>Out of Stock
+                                            </button>
+                                        </th:block>	
+                                        
+                                        
+                                        
+                                        
+                                        
+                                    </div>
+                                </div>
+                                <div class="font-xs">
+                                    <ul class="mr-50 float-start">
+                                        <li class="mb-5">Category: <span class="text-brand"> <a th:href="@{'/products?category=' + ${product.category}}">[[${product.category}]]</a></span></li>
+                                    </ul>
+                                    <ul class="float-start">
+                                        <li>Stock:<span class="in-stock text-brand ml-5">[[${product.stock}]] Items In Stock</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- Detail Info -->
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <div class="tab-style3">
+                            <ul class="nav nav-tabs text-uppercase">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="Description-tab" data-bs-toggle="tab" href="#Description">Description</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content shop_info_tab entry-main-content">
+                                <div class="tab-pane fade show active" id="Description">
+                                    <div class="">
+                                        [[${product.description}]]
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Market Data</title>
+</head>
+<body>
+<h1>Market Data</h1>
+
+<table border="1">
+    <tr>
+        <th>Commodity</th>
+        <th>Max Price</th>
+        <th>Min Price</th>
+        <th>Avg Price</th>
+    </tr>
+    <tr th:each="data : ${marketDataList}">
+        <td th:text="${data.commodities[0]}">Commodity Name</td>
+        <td th:text="${data.max}">Max Price</td>
+        <td th:text="${data.min}">Min Price</td>
+        <td th:text="${data.avg}">Avg Price</td>
+    </tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .data-container {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Sensor Data</h1>
+    <div th:if="${latestSensorData == null}" class="data-container">
+        <p>No data received yet.</p>
+    </div>
+    <div th:if="${latestSensorData != null}" class="data-container">
+        <h2>Latest Data:</h2>
+        <ul>
+            <li th:each="entry : ${latestSensorData}">
+                <strong th:text="${entry.key}"></strong>: <span th:text="${entry.value}"></span>
+            </li>
+        </ul>
+    </div>
+    <form action="/sensor" method="get">
+        <button type="submit">Refresh</button>
+    </form>
+</body>
+</html>

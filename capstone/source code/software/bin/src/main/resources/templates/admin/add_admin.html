@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{adminBase::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Add Admin</title>
+</head>
+<body>
+	<section>
+		<div class="page-wrapper">
+			
+			<!-- alert start-->
+			<th:block th:if="${session.succMsg}">
+			    <div class="alert alert-success alert-dismissible fade show py-2 alert-custom" role="alert">
+			        <div class="d-flex align-items-center">
+			            <div class="font-35 text-white"><i class='bx bxs-check-circle'></i></div>
+			            <div class="ms-3">
+			                <h6 class="mb-0 text-white" th:text="${session.succMsg}"></h6>
+			            </div>
+			        </div>
+			        <button type="button" class="btn-close" aria-label="Close"></button>
+			    </div>
+			</th:block>
+			<th:block th:if="${session.errorMsg}">
+			    <div class="alert alert-danger alert-dismissible fade show py-2 alert-custom" role="alert">
+			        <div class="d-flex align-items-center">
+			            <div class="font-35 text-white"><i class='bx bxs-error-circle'></i></div>
+			            <div class="ms-3">
+			                <h6 class="mb-0 text-white" th:text="${session.errorMsg}"></h6>
+			            </div>
+			        </div>
+			        <button type="button" class="btn-close" aria-label="Close"></button>
+			    </div>
+			</th:block>
+			
+			
+			<!-- alert end-->
+		
+			
+			
+			<div class="page-content">
+				<!--breadcrumb-->
+				<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+					<div class="breadcrumb-title pe-3">ADMIN</div>
+					<div class="ps-3">
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb mb-0 p-0">
+								<li class="breadcrumb-item"><a href="/admin/"><i class="bx bx-home-alt"></i></a>
+								</li>
+								<li class="breadcrumb-item active" aria-current="page">Add Admin</li>
+							</ol>
+						</nav>
+					</div>
+					<div class="ms-auto">
+						
+					</div>
+				</div>
+				<!--end breadcrumb-->
+				<div class="container">
+					<div class="main-body">
+						<div class="row">
+							<div class="col-lg-16">
+								<div class="card">
+									
+									<div class="card-body">
+										<form action="/admin/save-admin" enctype="multipart/form-data" method="post">
+	                                        <div class="row">
+												<div class="row">
+													<div class="col">
+														<label class="form-label">Full Name</label> <input required
+															class="form-control" name="name" type="text">
+													</div>
+
+													<div class="col">
+														<label class="form-label">Mobile Number</label> <input
+															required class="form-control" name="mobileNumber"
+															type="number">
+													</div>
+
+												</div>
+											<div class="row">
+												<div class="col">
+													<label class="form-label">Email</label> <input required
+														class="form-control" name="email" type="email">
+												</div>
+												<div class="col">
+													<label class="form-label">Profile Image</label> <input
+														class="form-control" name="img" type="file">
+												</div>
+											</div>
+
+
+												<div class="row">
+													<div class="col">
+														<label class="form-label">Address</label> <input required
+															class="form-control" name="address" type="text">
+													</div>
+
+													<div class="col">
+														<label class="form-label">City</label> <input required
+															class="form-control" name="city" type="text">
+													</div>
+
+												</div>
+
+												<div class="row">
+													<div class="col">
+														<label class="form-label">State</label> <input required
+															class="form-control" name="state" type="text">
+													</div>
+
+													<div class="col">
+														<label class="form-label">Pincode</label> <input required
+															class="form-control" name="pincode" type="number">
+													</div>
+
+												</div>
+
+												<div class="row">
+													<div class="col">
+														<label class="form-label">Password</label> <input required
+															class="form-control" name="password" type="password">
+													</div>
+													<div class="col">
+														<label class="form-label">Confirm Password</label> <input
+															required class="form-control" name="cpassword"
+															type="password">
+													</div>
+												</div>
+												<div class="col-md-12 mt-4">
+												                                                    
+													<button type="submit" class="btn btn-light px-5 " name="submit"><i class='bx bx-user-plus'></i>Add Admin</button>
+                                                </div>
+	                                    </form>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</section>
+</body>
+</html>

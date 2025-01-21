@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Data</title>
+</head>
+<body>
+    <h1>Sensor Data</h1>
+
+    <p><strong>Gas Level:</strong> <span id="gasValue">Loading...</span></p>
+    <p><strong>Moisture Level:</strong> <span id="moistureValue">Loading...</span></p>
+    <p><strong>Red Frequency:</strong> <span id="redValue">Loading...</span></p>
+    <p><strong>Green Frequency:</strong> <span id="greenValue">Loading...</span></p>
+    <p><strong>Blue Frequency:</strong> <span id="blueValue">Loading...</span></p>
+
+    <script>
+        async function fetchSensorData() {
+            try {
+                // Fetch data from the Spring Boot backend
+                const response = await fetch('/sensors'); // Assuming your Spring Boot app runs on localhost:8080
+                if (response.ok) {
+                    const data = await response.json();  // Parse the JSON data
+
+                    console.log(data); // Log the data to the browser console for debugging
+
+                    // Display the data in the HTML
+                    document.getElementById('gasValue').textContent = data.gas;
+                    document.getElementById('moistureValue').textContent = data.moisture;
+                    document.getElementById('redValue').textContent = data.red;
+                    document.getElementById('greenValue').textContent = data.green;
+                    document.getElementById('blueValue').textContent = data.blue;
+                } else {
+                    console.error('Failed to fetch data');
+                }
+            } catch (error) {
+                console.error('Error fetching sensor data:', error);
+            }
+        }
+
+        // Fetch data every 1 second (1000 ms)
+        setInterval(fetchSensorData, 1000);  // Update every second
+    </script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+// TCS3200 Color Sensor Pins
+#define S0 4
+#define S1 5
+#define S2 6
+#define S3 3
+#define OUT 7
+
+// Moisture Sensor Pin
+#define MOISTURE_PIN A0  // Analog output from moisture sensor
+
+// MQ-135 Gas Sensor Pins
+#define GAS_ANALOG_PIN A1   // Analog output from gas sensor
+#define GAS_DIGITAL_PIN 8   // Digital output from gas sensor
+
+// Thresholds for seed decay detection (adjust based on calibration)
+const int gasThreshold = 500;  // Analog value above this indicates decay-related gases
+const int digitalThreshold = HIGH;  // If DOUT is HIGH, decay is detected
+const int moistureThresholdLow = 30;  // Minimum acceptable moisture level (%)
+const int moistureThresholdHigh = 50; // Maximum acceptable moisture level (%)
+
+void setup() {
+  // Initialize Serial Monitor
+  Serial.begin(9600);
+
+  // TCS3200 Color Sensor Setup
+  pinMode(S0, OUTPUT);
+  pinMode(S1, OUTPUT);
+  pinMode(S2, OUTPUT);
+  pinMode(S3, OUTPUT);
+  pinMode(OUT, INPUT);
+
+  // Set frequency scaling to 20%
+  digitalWrite(S0, HIGH);
+  digitalWrite(S1, LOW);
+}
+
+void loop() {
+  // TCS3200: Read RGB Values
+  int redFrequency, greenFrequency, blueFrequency;
+
+  // Read Red
+  digitalWrite(S2, LOW);
+  digitalWrite(S3, LOW);
+  redFrequency = pulseIn(OUT, LOW);
+
+  // Read Green
+  digitalWrite(S2, HIGH);
+  digitalWrite(S3, HIGH);
+  greenFrequency = pulseIn(OUT, LOW);
+
+  // Read Blue
+  digitalWrite(S2, LOW);
+  digitalWrite(S3, HIGH);
+  blueFrequency = pulseIn(OUT, LOW);
+
+  // Determine Dominant Color
+  String color = "Unknown";
+  if (redFrequency < greenFrequency && redFrequency < blueFrequency) {
+    color = "Red";
+  } else if (greenFrequency < redFrequency && greenFrequency < blueFrequency) {
+    color = "Green";
+  } else if (blueFrequency < redFrequency && blueFrequency < greenFrequency) {
+    color = "Blue";
+  }
+
+  // Moisture Sensor: Read Moisture Level
+  int moistureValue = analogRead(MOISTURE_PIN);
+  int moisturePercent = map(moistureValue, 1023, 0, 0, 100);
+
+  // Gas Sensor: Read Gas Concentration
+  int gasValue = analogRead(GAS_ANALOG_PIN);  // Analog value from gas sensor
+  int digitalValue = digitalRead(GAS_DIGITAL_PIN);  // Digital value (decay detected or not)
+
+  // Evaluate Seed Quality
+  String seedQuality = "Good";
+
+  // Check Moisture Level
+  if (moisturePercent < moistureThresholdLow || gasValue > gasThreshold) {
+    seedQuality = "Average";
+  }
+
+  if(moisturePercent > moistureThresholdHigh || gasValue > gasThreshold){
+    seedQuality = "Bad";
+  }
+
+
+
+
+ // Create a JSON-like string to send
+  String data = "{";
+  data += "\"red\": " + String(redFrequency) + ", ";
+  data += "\"green\": " + String(greenFrequency) + ", ";
+  data += "\"blue\": " + String(blueFrequency) + ", ";
+  data += "\"moisture\": " + String(moisturePercent) + ", ";
+  data += "\"gas\": " + String(gasValue);
+   data += "\"Color\": " + String(color);
+   data += "\"Seed Quality\": " + String(seedQuality);
+
+  data += "}";
+
+  // Send the data as a single string
+  Serial.println(data);
+  delay(1000); // Wait for 1 second before next reading
+}

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<section>
+		
+		<!--assistant button-->
+		<button id="voice-button" class="text-white " style="position: fixed; z-index: 2147483647; right: 25px; bottom: 70px; 
+				width: 50px; height: 50px; border: none; border-radius: 100%;
+				 background:linear-gradient(-120deg,#4285f4,#34a853,#fbbc05,#ea4335) ;"><i class="fa fa-microphone"></i></button>
+				 
+				 <audio id="notification-sound" src="assets/sounds/notify.mp3" preload="auto"></audio>
+				 <!--assistant button-->
+				 <!--chat bot-->
+				 	 
+				 		<button id="chatbot-button" class="text-white " style="position: fixed; z-index: 2147483647; right: 25px; bottom: 125px; 
+				 		 		width: 50px; height: 50px; border: none; border-radius: 100%;
+				 		 		 background:linear-gradient(-120deg,rgb(120, 211, 170),rgb(41, 129, 89),#3bb77e) ;"><i class='fa-solid fa-robot' style='font-size:24px'></i></button>
+				 		 
+				 				 
+				 				 
+				 				 <div class="chat">
+				 		 			<div class="chat-title">
+				 		 			<h1 style="color:#fff">AgriMate</h1>
+				 		 			<button class="close-btn"><i class="fa fa-times	"></i></button>
+				 		 			</div>
+				 		 			<div class="messages">
+				 		 			<div class="messages-content"></div>
+				 		 			</div>
+				 		 			<div class="message-box">
+				 		 			<input type="text" class="message-input" placeholder="Type message..."></input>
+				 		 			<button type="submit" class="message-submit"><i class="fa-solid fa-paper-plane" style='font-size:24px'></i></button>
+				 		 			</div>
+				 		 		</div>
+				 	 <!--chat bot-->
+				 
+		<main class="main">
+		       <div class="page-header mt-30 mb-50">
+		           <div class="container">
+		               <div class="archive-header">
+		                   <div class="row align-items-center">
+		                       <div class="col-xl-3">
+		                           <h1 th:if="${selectedCategory}"  class="mb-15 text-capitalize">[[${selectedCategory}]]</h1>
+								   <h1 th:if="${searchTerm != ''}"  class="mb-15 text-capitalize" th:text="${searchTerm}"></h1>
+																       
+								   
+		                           <div class="breadcrumb">
+		                               <a href='/' rel='nofollow'><i class="fi-rs-home mr-5"></i>Home</a>
+		                               <span></span> Shop
+		                           </div>
+		                       </div>
+		                       
+		                   </div>
+		               </div>
+		           </div>
+		       </div>
+		       <div class="container mb-30">
+		           <div class="row flex-row-reverse">
+		               <div class="col-lg-4-5">
+		                   <div class="shop-product-fillter">
+		                       <div class="totall-product">
+		                           <p>We found <strong class="text-brand">[[${totalElements}]]</strong> items for you!</p>
+		                       </div>
+		                      
+		                   </div>
+		                   <div class="row product-grid">
+							<th:block th:if="${productsSize >0}">
+		                       <div class="col-lg-1-5 col-md-4 col-12 col-sm-6" th:each="p:${products}">
+		                           <div class="product-cart-wrap mb-30">
+		                               <div class="product-img-action-wrap">
+		                                   <div class="product-img product-img-zoom">
+		                                       <a th:href="@{'/product/'+${p.id}}">
+												<img alt="" th:src="@{'/img/product_img/'+${p.image}}"
+					   													width="150px" height="150px">
+		                                           
+		                                       </a>
+		                                   </div>
+		                                   
+		                                   <div class="product-badges product-badges-position product-badges-mrg">
+		                                       <span class="hot">[[${p.discount}]]% off</span>
+		                                   </div>
+		                               </div>
+		                               <div class="product-content-wrap">
+		                                   <div class="product-category">
+		                                       <a th:href="@{'/products?category=' + ${p.category}}">[[${p.category}]]</a>
+											   
+
+											  
+		                                   </div>
+		                                   <h2><a style="display: -webkit-box;
+										   -webkit-line-clamp: 3;
+										   -webkit-box-orient: vertical;
+										   overflow: hidden;
+										   text-overflow: ellipsis;" th:href="@{'/product/'+${p.id}}">[[${p.title}]]</a></h2>
+		                                   
+		                                   
+		                                   <div class="product-card-bottom">
+		                                       <div class="product-price">
+		                                           <span>[[${p.discountPrice}]]</span>
+		                                           <span class="old-price">[[${p.price}]]</span>
+		                                       </div>
+											   
+		                                      
+		                                   </div>
+		                               </div>
+		                           </div>
+		                       </div>
+		                       </th:block>
+							   <th:block th:if="${productsSize == 0}">
+							       <div class="no-items-found">
+							           
+									<h3 class="mb-150 mt-100 text-capitalize">
+							           It looks like we don’t have any products for 
+							           <span th:text="${searchTerm}" style="font-weight: bold; color: #3bb77e;"></span>
+							           right now.
+							       </h3>
+									
+									   
+									   
+									   
+							       </div>
+							   </th:block>
+		                   </div>
+						   
+						   
+		                   <!--product grid-->
+		                   <div class="pagination-area mt-20 mb-20">
+		                       <nav aria-label="Page navigation example">
+		                           <ul class="pagination justify-content-start">
+		                               <li class="page-item" th:classappend="${isFirst} ? 'disabled':''">
+		                                   <a class="page-link" th:href="@{'/products?pageNo='+${pageNo-1}}" aria-label="Previous"><i class="fi-rs-arrow-small-left" aria-hidden="true"></i></a>
+		                               </li>
+		                               <li th:each="i:${#numbers.sequence(1,totalPages)}" class="page-item" th:classappend="${pageNo+1==i}?'active':''"]]><a class="page-link" th:href="@{'/products?pageNo='+${i-1}}">[[${i}]]</a></li>
+		                               
+		                               <li class="page-item" th:classappend="${isLast} ? 'disabled':''" >
+		                                   <a class="page-link" th:href="@{'/products?pageNo='+${pageNo+1}}" aria-label="Next"><i class="fi-rs-arrow-small-right" aria-hidden="true"></i></a>
+		                               </li>
+		                           </ul>
+		                       </nav>
+		                   </div>
+		                 
+		                   <!--End Deals-->
+		               </div>
+		               <div class="col-lg-1-5 primary-sidebar sticky-sidebar">
+		                   <div class="sidebar-widget widget-category-2 mb-30">
+		                       <h5 class="section-title style-1 mb-30">Category</h5>
+		                       <ul>
+		                           <li>
+		                               <a href="/products" th:classappend="${paramValue==''} ? 'active':''"  aria-current="true">All</a>
+		                           </li>
+		                           
+								   
+								   <li th:each="c : ${categories}">
+								               <a th:href="@{'/products?category=' + ${c.name}}"
+								                  th:classappend="${paramValue == c.name} ? 'active':''">
+								                   
+								                   [[${c.name}]]
+								               </a>
+								               
+								           </li>
+								   
+								   
+		                       </ul>
+		                   </div>
+		                   <!-- Fillter By Price -->
+						   
+
+		                   <!-- Product sidebar Widget -->
+		                 
+		                   <div class="banner-img wow fadeIn mb-lg-0 animated d-lg-block d-none">
+		                       <img src="assets/imgs/banner/banner-11.png" alt="" />
+		                       <div class="banner-text">
+		                           <span>Oganic</span>
+		                           <h4>
+		                               Save 17% <br />
+		                               on <span class="text-brand">Oganic</span><br />
+		                               Juice
+		                           </h4>
+		                       </div>
+		                   </div>
+		               </div>
+		           </div>
+		       </div>
+		   </main>
+
+	</section>
+</body>
+</html>

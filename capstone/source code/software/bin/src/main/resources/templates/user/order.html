@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+
+</head>
+<body>
+	<section>
+		<style>
+		    .error {
+		        color: red;
+		        font-size: 0.875em;
+		    }
+		</style>
+		<div class="container mt-5 p-5">
+			<form action="/user/save-order" method="post" id="orders" novalidate>
+				<div class="row">
+					<div class="col-md-6">
+						<div class="mb-3 row">
+							<p class="text-center fs-4">Billing Address</p>
+							<hr>
+							<div class="col p-1">
+								<label>Name</label>
+								<input type="text" name="firstName" id="firstName" required class="form-control mt-1" th:value="${user.name}">
+								<span id="firstNameError" class="error"></span>
+							</div>
+							<div class="col p-1">
+									<label>Mobile Number</label>
+									<input type="text" name="mobileNo" id="mobileNo" required class="form-control col ms-2" th:value="${user.mobileNumber}">
+									<span id="mobileNoError" class="error"></span>
+								</div>
+							
+						</div>
+
+						<div class="mb-3 row">
+							<!--<div class="col p-1">
+								<label>Email</label>
+								<input type="email" name="email" id="email" readonly required class="form-control col" th:value="${user.email}">
+								<span id="emailError" class="error"></span>
+							</div>-->
+							
+						</div>
+
+						<div class="mb-3 row">
+							<div class="col p-1">
+								<label>Address</label>
+								<input type="text" name="address" id="address" required class="form-control col" th:value="${user.address}">
+								<span id="addressError" class="error"></span>
+							</div>
+							<div class="col p-1">
+								<label>City</label>
+								<input type="text" name="city" id="city" required class="form-control col ms-2" th:value="${user.city}">
+								<span id="cityError" class="error"></span>
+							</div>
+						</div>
+						<div class="mb-3 row">
+							<div class="col p-1">
+								<label>State</label>
+								<input type="text" name="state" id="state" required class="form-control col" th:value="${user.state}">
+								<span id="stateError" class="error"></span>
+							</div>
+							<div class="col p-1">
+								<label>Pincode</label>
+								<input type="number" name="pincode" id="pincode" required class="form-control col ms-2" th:value="${user.pincode}">
+								<span id="pincodeError" class="error"></span>
+							</div>
+						</div>
+					</div>
+
+				
+					<div class="col-lg-4">
+						<div class="border p-md-4 cart-totals ml-30">
+							<div class="table-responsive">
+								<table class="table no-border">
+								
+    <tbody>
+        <tr>
+            <td class="cart_total_label">
+                <h6 class="text-muted">Subtotal</h6>
+            </td>
+            <td class="cart_total_amount">
+                <h4 class="text-brand text-end">[[${orderPrice}]]</h4>
+            </td>
+        </tr>
+        <tr>
+            <td scope="col" colspan="2">
+                <div class="divider-2 mt-10 mb-10"></div>
+            </td>
+        </tr>
+        <tr>
+            <td class="cart_total_label">
+                <h6 class="text-muted">Shipping</h6>
+            </td>
+            <td class="cart_total_amount">
+                <h5 class="text-heading text-end">[[${shippingCost}]]</h5>
+            </td>
+        </tr>
+        <tr>
+            <td class="cart_total_label">
+                <h6 class="text-muted">Tax</h6>
+            </td>
+            <td class="cart_total_amount">
+                <h5 class="text-heading text-end">[[${taxAmount}]]</h5>
+            </td>
+        </tr>
+        <tr>
+            <td scope="col" colspan="2">
+                <div class="divider-2 mt-10 mb-10"></div>
+            </td>
+        </tr>
+        <tr>
+            <td class="cart_total_label">
+                <h6 class="text-muted">Total</h6>
+            </td>
+            <td class="cart_total_amount">
+                <h4 class="text-brand text-end">[[${totalOrderPrice}]]</h4>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <label class="form-label">Select Payment Type</label>
+                <select required name="paymentType" id="paymentType" class="form-control">
+                    <option value="">--select--</option>
+                    <option value="COD">Cash On Delivery</option>
+                    <option value="ONLINE">Online Payment</option>
+                </select>
+                <span id="paymentTypeError" class="error"></span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+							</div>
+							<button type="submit" class="button button-add-to-cart w-100">Proceed To CheckOut<i class="fi-rs-sign-out ml-15"></i></button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<script>
+				document.getElementById('orders').addEventListener('submit', function(event) {
+					var form = event.target;
+					var isValid = true;
+
+					// Clear previous errors
+					document.querySelectorAll('.error').forEach(function(span) {
+						span.textContent = '';
+					});
+
+					// Check if fields are filled
+					if (!form.firstName.value) {
+						isValid = false;
+						document.getElementById('firstNameError').textContent = 'First Name is required';
+					}
+					if (!form.lastName.value) {
+						isValid = false;
+						document.getElementById('lastNameError').textContent = 'Last Name is required';
+					}
+					if (!form.email.value) {
+						isValid = false;
+						document.getElementById('emailError').textContent = 'Email is required';
+					}
+					if (!form.mobileNo.value) {
+						isValid = false;
+						document.getElementById('mobileNoError').textContent = 'Mobile Number is required';
+					}
+					if (!form.address.value) {
+						isValid = false;
+						document.getElementById('addressError').textContent = 'Address is required';
+					}
+					if (!form.city.value) {
+						isValid = false;
+						document.getElementById('cityError').textContent = 'City is required';
+					}
+					if (!form.state.value) {
+						isValid = false;
+						document.getElementById('stateError').textContent = 'State is required';
+					}
+					if (!form.pincode.value) {
+						isValid = false;
+						document.getElementById('pincodeError').textContent = 'Pincode is required';
+					}
+					if (!form.paymentType.value) {
+						isValid = false;
+						document.getElementById('paymentTypeError').textContent = 'Payment Type is required';
+					}
+
+					if (!isValid) {
+						event.preventDefault(); // Stop form from submitting if invalid
+					}
+				});
+			</script>
+	</section>
+
+	
+</body>
+</html>

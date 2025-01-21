@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{adminBase::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<section>
+		
+		<div class="page-wrapper">
+			<th:block th:if="${session.succMsg}">
+					    <div class="alert alert-success alert-dismissible fade show py-2 alert-custom" data-bs-dismiss="alert" role="alert">
+					        <div class="d-flex align-items-center">
+					            <div class="font-35 text-white"><i class='bx bxs-check-circle'></i></div>
+					            <div class="ms-3">
+					                <h6 class="mb-0 text-white" th:text="${session.succMsg}"></h6>
+					            </div>
+					        </div>
+					        <button type="button" class="btn-close" aria-label="Close"></button>
+					    </div>
+					</th:block>
+					<th:block th:if="${session.errorMsg}">
+					    <div class="alert alert-danger alert-dismissible fade show py-2 alert-custom" data-bs-dismiss="alert" role="alert">
+					        <div class="d-flex align-items-center">
+					            <div class="font-35 text-white"><i class='bx bxs-error-circle'></i></div>
+					            <div class="ms-3">
+					                <h6 class="mb-0 text-white" th:text="${session.errorMsg}"></h6>
+					            </div>
+					        </div>
+					        <button type="button" class="btn-close" aria-label="Close"></button>
+					    </div>
+					</th:block>
+			<div class="page-content">
+				<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+						<div class="breadcrumb-title pe-3">SELLER</div>
+						<div class="ps-3">
+							<nav aria-label="breadcrumb">
+								<ol class="breadcrumb mb-0 p-0">
+									<li class="breadcrumb-item"><a href="/seller/"><i class="bx bx-home-alt"></i></a>
+									</li>
+									<li class="breadcrumb-item active" aria-current="page">Products || count : [[${totalProducts}]]</li>
+								</ol>
+							</nav>
+						</div>
+						<div class="ms-auto">
+							
+						</div>
+					</div>
+
+				<div class="row">
+					<div class="col-12">
+						<div class="card">
+							<div class="card-body">
+								<div class="row align-items-center">
+									<div class="col-lg-3 col-xl-2">
+										
+									</div>
+									<div class="col-lg-9 col-xl-10">
+										<form class="float-lg-end" action="/seller/products" method="get">
+											<div class="row row-cols-lg-auto g-2">
+												
+												<div class="col-12">
+													<div class="position-relative">
+														<input type="text" class="form-control ps-5" placeholder="Search Product..." name="ch"> <span class="position-absolute top-50 product-show translate-middle-y"><i class="bx bx-search"></i></span>
+													</div>
+												</div>
+												<!--<div class="col-12">
+													
+														<button type="button" class="btn btn-light" id="updatePriceButton">
+																<i class='bx bx-refresh mr-1'></i> <span id="buttonText">Update Price</span>
+															</button>
+												
+												</div>-->
+												
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 product-grid">
+				
+					
+					<div class="col" th:each="p,c:${products}">
+						<div class="card">
+							<div th:if="${p.stock == 0}" class="position-absolute top-0 start-0 m-3 bg-danger text-white p-1" style="border-radius: 5px;">
+							            Out of Stock
+							        </div>
+							<img th:src="@{'/img/product_img/'+${p.image}}" class="card-img-top" alt="..." width="150px" height="150px">
+							<div class="">
+								<div class="position-absolute top-0 end-0 m-3 product-discount bg-success"><span class="">-[[${p.discount}]]%</span></div>
+							</div>
+							<div class="card-body">
+								<h6 class="card-title cursor-pointer">[[${p.title}]] </h6>
+								<p hidden>[[${p.commodity}]]</p>
+								
+								<p  hidden>[[${p.priceLastUpdated}]]</p>
+								<div class="clearfix">
+									
+									
+									<a th:href="@{'/seller/editProduct/'+${p.id}}" class="btn btn-sm btn-light"><i class='bx bx-edit'></i></a>
+									<a th:href="@{'/seller/deleteProduct/'+${p.id}}" class="btn btn-sm btn-light"><i class='bx bx-trash'></i></a>
+									
+									
+									
+									
+									<p class="mb-0 float-end fw-bold"><span class="me-2 text-decoration-line-through">[[${p.price}]]</span><span class="text-white">[[${p.discountPrice}]]</span></p>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div><!--end row-->
+
+
+			</div>
+		</div>
+		<!-- 	</div> -->
+	</section>
+</body>
+</html>
